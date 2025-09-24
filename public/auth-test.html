@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 600px; 
+            margin: 50px auto; 
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success { border-color: #28a745; background: #d4edda; }
+        .error { border-color: #dc3545; background: #f8d7da; }
+    </style>
+</head>
+<body>
+    <h1>🔐 Authentication Test</h1>
+    <p>This page tests the authentication flow to verify the JSON parsing fix.</p>
+    
+    <div class="test-container">
+        <h3>Test 1: Login</h3>
+        <button onclick="testLogin()">Test Admin Login</button>
+        <div id="loginResult" class="result" style="display: none;"></div>
+    </div>
+    
+    <div class="test-container">
+        <h3>Test 2: Check localStorage</h3>
+        <button onclick="checkLocalStorage()">Check Stored Data</button>
+        <div id="storageResult" class="result" style="display: none;"></div>
+    </div>
+    
+    <div class="test-container">
+        <h3>Test 3: Parse JSON</h3>
+        <button onclick="testJSONParsing()">Test JSON Parsing</button>
+        <div id="jsonResult" class="result" style="display: none;"></div>
+    </div>
+    
+    <div class="test-container">
+        <h3>Quick Access</h3>
+        <button onclick="window.location.href='/admin/login'">Go to Admin Login</button>
+        <button onclick="window.location.href='/admin'">Go to Admin Dashboard</button>
+        <button onclick="window.location.href='/'">Go to Registration</button>
+    </div>
+
+    <script>
+        async function testLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Testing login...';
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@example.com',
+                        password: 'admin123'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Test storing the data like the login page does
+                    localStorage.setItem('adminToken', result.data.token);
+                    localStorage.setItem('adminUser', JSON.stringify(result.data.user));
+                    
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Login successful!\n\nResponse:\n${JSON.stringify(result, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Login failed:\n${JSON.stringify(result, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Login error:\n${error.message}`;
+            }
+        }
+        
+        function checkLocalStorage() {
+            const resultDiv = document.getElementById('storageResult');
+            resultDiv.style.display = 'block';
+            
+            const token = localStorage.getItem('adminToken');
+            const adminUserData = localStorage.getItem('adminUser');
+            
+            let output = '';
+            output += `Token: ${token ? '✅ Present' : '❌ Missing'}\n`;
+            output += `Admin User Data: ${adminUserData ? '✅ Present' : '❌ Missing'}\n\n`;
+            
+            if (token) {
+                output += `Token: ${token.substring(0, 50)}...\n\n`;
+            }
+            
+            if (adminUserData) {
+                output += `Raw Admin Data: ${adminUserData}\n\n`;
+            }
+            
+            resultDiv.className = 'result';
+            resultDiv.textContent = output;
+        }
+        
+        function testJSONParsing() {
+            const resultDiv = document.getElementById('jsonResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                // Test the same logic as the admin dashboard
+                const token = localStorage.getItem('adminToken');
+                const adminUserData = localStorage.getItem('adminUser');
+                
+                let adminUser = {};
+                let output = '';
+                
+                output += `Step 1: Getting data from localStorage...\n`;
+                output += `Token: ${token ? 'Found' : 'Not found'}\n`;
+                output += `Admin Data: ${adminUserData ? 'Found' : 'Not found'}\n\n`;
+                
+                output += `Step 2: Parsing admin user data...\n`;
+                
+                if (adminUserData) {
+                    try {
+                        adminUser = JSON.parse(adminUserData);
+                        output += `✅ JSON parsing successful!\n`;
+                        output += `Parsed data:\n${JSON.stringify(adminUser, null, 2)}\n\n`;
+                    } catch (error) {
+                        output += `❌ JSON parsing failed: ${error.message}\n`;
+                        localStorage.removeItem('adminUser');
+                        output += `🧹 Cleaned up invalid data\n\n`;
+                    }
+                } else {
+                    output += `ℹ️  No admin user data to parse\n\n`;
+                }
+                
+                output += `Step 3: Final result...\n`;
+                output += `Admin User Object: ${JSON.stringify(adminUser, null, 2)}`;
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent = output;
+                
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Test error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

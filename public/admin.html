@@ -580,7 +580,18 @@
 
         function checkAuth() {
             const token = localStorage.getItem('adminToken');
-            const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
+            const adminUserData = localStorage.getItem('adminUser');
+            
+            // Safely parse admin user data
+            let adminUser = {};
+            if (adminUserData) {
+                try {
+                    adminUser = JSON.parse(adminUserData);
+                } catch (error) {
+                    console.error('Error parsing admin user data:', error);
+                    localStorage.removeItem('adminUser');
+                }
+            }
 
             if (!token) {
                 window.location.href = '/admin/login';

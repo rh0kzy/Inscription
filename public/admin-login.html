@@ -301,7 +301,7 @@
                     if (result.success) {
                         // Store token in localStorage
                         localStorage.setItem('adminToken', result.data.token);
-                        localStorage.setItem('adminUser', JSON.stringify(result.data.admin));
+                        localStorage.setItem('adminUser', JSON.stringify(result.data.user));
                         
                         // Redirect to admin dashboard
                         window.location.href = '/admin';
