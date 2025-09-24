@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form - Modern Inscription System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background-color: #fafbfc;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .loading.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f1aeb5;
+        }
+
+        .error-list {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .admin-link {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            padding: 12px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-link:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .admin-link {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 20px auto;
+                display: block;
+                text-align: center;
+                width: fit-content;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/admin/login" class="admin-link">
+        <i class="fas fa-user-shield"></i> Admin Dashboard
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-graduation-cap"></i> Registration Form</h1>
+            <p>Join our program today! Fill out the form below to submit your application.</p>
+        </div>
+
+        <div class="form-container">
+            <div id="alertContainer"></div>
+
+            <form id="inscriptionForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="firstName">First Name <span class="required">*</span></label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name <span class="required">*</span></label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="birthDate">Date of Birth <span class="required">*</span></label>
+                        <input type="date" id="birthDate" name="birthDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="program">Program <span class="required">*</span></label>
+                        <select id="program" name="program" required>
+                            <option value="">Select a program</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Business Administration">Business Administration</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Medicine">Medicine</option>
+                            <option value="Arts & Literature">Arts & Literature</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="Digital Marketing">Digital Marketing</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="address">Address <span class="required">*</span></label>
+                        <input type="text" id="address" name="address" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">City <span class="required">*</span></label>
+                        <input type="text" id="city" name="city" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="postalCode">Postal Code <span class="required">*</span></label>
+                        <input type="text" id="postalCode" name="postalCode" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="country">Country <span class="required">*</span></label>
+                        <select id="country" name="country" required>
+                            <option value="">Select a country</option>
+                            <option value="United States">United States</option>
+                            <option value="Canada">Canada</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="France">France</option>
+                            <option value="Germany">Germany</option>
+                            <option value="Spain">Spain</option>
+                            <option value="Italy">Italy</option>
+                            <option value="Netherlands">Netherlands</option>
+                            <option value="Sweden">Sweden</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Japan">Japan</option>
+                            <option value="South Korea">South Korea</option>
+                            <option value="India">India</option>
+                            <option value="Brazil">Brazil</option>
+                            <option value="Mexico">Mexico</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="motivation">Why do you want to join this program? <span class="required">*</span></label>
+                        <textarea id="motivation" name="motivation" placeholder="Tell us about your motivation, goals, and what you hope to achieve... (minimum 50 characters)" required></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">
+                    <span class="btn-text">Submit Application</span>
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <span>Processing...</span>
+                    </div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('inscriptionForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const loading = submitBtn.querySelector('.loading');
+            const alertContainer = document.getElementById('alertContainer');
+
+            function showAlert(message, type = 'error', errors = []) {
+                alertContainer.innerHTML = `
+                    <div class="alert alert-${type} show">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                        ${message}
+                        ${errors.length > 0 ? `
+                            <ul class="error-list">
+                                ${errors.map(error => `<li>${error}</li>`).join('')}
+                            </ul>
+                        ` : ''}
+                    </div>
+                `;
+                
+                // Scroll to alert
+                alertContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            function hideAlert() {
+                alertContainer.innerHTML = '';
+            }
+
+            function setLoading(isLoading) {
+                if (isLoading) {
+                    submitBtn.disabled = true;
+                    btnText.style.display = 'none';
+                    loading.classList.add('show');
+                } else {
+                    submitBtn.disabled = false;
+                    btnText.style.display = 'inline';
+                    loading.classList.remove('show');
+                }
+            }
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                hideAlert();
+
+                const formData = new FormData(form);
+                const data = {};
+                
+                for (let [key, value] of formData.entries()) {
+                    data[key] = value.trim();
+                }
+
+                // Basic client-side validation
+                if (data.motivation.length < 50) {
+                    showAlert('Motivation must be at least 50 characters long.');
+                    return;
+                }
+
+                setLoading(true);
+
+                try {
+                    const response = await fetch('/api/inscriptions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        showAlert(result.message, 'success');
+                        form.reset();
+                        
+                        // Redirect to success page after 3 seconds
+                        setTimeout(() => {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }, 100);
+                    } else {
+                        showAlert(result.message, 'error', result.errors || []);
+                    }
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    showAlert('An error occurred while submitting your application. Please try again.');
+                } finally {
+                    setLoading(false);
+                }
+            });
+
+            // Auto-expand textarea
+            const textarea = document.getElementById('motivation');
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            // Character counter for motivation
+            const motivationField = document.getElementById('motivation');
+            const motivationGroup = motivationField.closest('.form-group');
+            
+            const counter = document.createElement('div');
+            counter.style.cssText = 'font-size: 0.85em; color: #666; margin-top: 5px; text-align: right;';
+            motivationGroup.appendChild(counter);
+            
+            motivationField.addEventListener('input', function() {
+                const length = this.value.length;
+                const min = 50;
+                counter.textContent = `${length}/${min} characters minimum`;
+                counter.style.color = length >= min ? '#28a745' : '#666';
+            });
+        });
+    </script>
+</body>
+</html>
