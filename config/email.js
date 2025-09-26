@@ -179,6 +179,27 @@ class EmailService {
       console.error(`❌ Failed to send ${decision} notification:`, error.message);
     }
   }
+
+  // Alias methods for backwards compatibility and clearer naming
+  async sendApprovalEmail(email, name, program) {
+    const inscription = {
+      email: email,
+      first_name: name.split(' ')[0],
+      last_name: name.split(' ').slice(1).join(' '),
+      program: program
+    };
+    return this.sendDecisionNotification(inscription, 'approved');
+  }
+
+  async sendRejectionEmail(email, name, notes = '') {
+    const inscription = {
+      email: email,
+      first_name: name.split(' ')[0],
+      last_name: name.split(' ').slice(1).join(' '),
+      program: '' // Will be populated from database in admin route
+    };
+    return this.sendDecisionNotification(inscription, 'rejected', notes);
+  }
 }
 
 module.exports = new EmailService();

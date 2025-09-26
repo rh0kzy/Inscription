@@ -146,7 +146,7 @@ router.get('/inscriptions/:id', authenticateToken, async (req, res) => {
 // PATCH /api/admin/inscriptions/:id - Update inscription status
 router.patch('/inscriptions/:id', authenticateToken, async (req, res) => {
   const inscriptionId = req.params.id;
-  const { status, adminNotes } = req.body;
+  const { status, admin_notes } = req.body;
 
   // Validate status
   if (!['pending', 'approved', 'rejected', 'under_review'].includes(status)) {
@@ -183,26 +183,16 @@ router.patch('/inscriptions/:id', authenticateToken, async (req, res) => {
         updated_at = CURRENT_TIMESTAMP
       WHERE id = $4
       RETURNING *
-    `, [status, adminNotes || null, req.user.email, inscriptionId]);
+    `, [status, admin_notes || null, req.user.email, inscriptionId]);
 
     const updatedInscription = updateResult.rows[0];
 
     // Send email notification if status changed to approved or rejected
     if ((status === 'approved' || status === 'rejected') && inscription.status !== status) {
       try {
-        if (status === 'approved') {
-          await EmailService.sendApprovalEmail(
-            inscription.email,
-            `${inscription.first_name} ${inscription.last_name}`,
-            inscription.program
-          );
-        } else if (status === 'rejected') {
-          await EmailService.sendRejectionEmail(
-            inscription.email,
-            `${inscription.first_name} ${inscription.last_name}`,
-            adminNotes || 'Unfortunately, we cannot process your application at this time.'
-          );
-        }
+        // Use the comprehensive sendDecisionNotification method
+        await EmailService.sendDecisionNotification(inscription, status, admin_notes || '');
+        console.log(`📧 ${status} email sent successfully to ${inscription.email}`);
       } catch (emailError) {
         console.error('Failed to send notification email:', emailError);
         // Continue without failing the status update
@@ -211,7 +201,78 @@ router.patch('/inscriptions/:id', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Inscription updated successfully',
+      message: `Inscription ${status} successfully! ${(status === 'approved' || status === 'rejected') ? 'Email notification sent.' : ''}`,
+      data: updatedInscription
+    });
+
+  } catch (error) {
+    console.error('Error updating inscription:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update inscription'
+    });
+  }
+});
+
+// PATCH /api/admin/inscriptions/:id/status - Alternative route for status updates
+router.patch('/inscriptions/:id/status', authenticateToken, async (req, res) => {
+  const inscriptionId = req.params.id;
+  const { status, admin_notes } = req.body;
+
+  // Validate status
+  if (!['pending', 'approved', 'rejected', 'under_review'].includes(status)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid status value'
+    });
+  }
+
+  try {
+    // First check if inscription exists
+    const inscriptionResult = await database.query(
+      'SELECT * FROM inscriptions WHERE id = $1',
+      [inscriptionId]
+    );
+
+    if (inscriptionResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Inscription not found'
+      });
+    }
+
+    const inscription = inscriptionResult.rows[0];
+
+    // Update inscription
+    const updateResult = await database.query(`
+      UPDATE inscriptions 
+      SET 
+        status = $1,
+        admin_notes = $2,
+        processed_by = $3,
+        processed_at = CURRENT_TIMESTAMP,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = $4
+      RETURNING *
+    `, [status, admin_notes || null, req.user.email, inscriptionId]);
+
+    const updatedInscription = updateResult.rows[0];
+
+    // Send email notification if status changed to approved or rejected
+    if ((status === 'approved' || status === 'rejected') && inscription.status !== status) {
+      try {
+        // Use the comprehensive sendDecisionNotification method
+        await EmailService.sendDecisionNotification(inscription, status, admin_notes || '');
+        console.log(`📧 ${status} email sent successfully to ${inscription.email}`);
+      } catch (emailError) {
+        console.error('Failed to send notification email:', emailError);
+        // Continue without failing the status update
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Inscription ${status} successfully! ${(status === 'approved' || status === 'rejected') ? 'Email notification sent.' : ''}`,
       data: updatedInscription
     });
 

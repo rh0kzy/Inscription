@@ -1030,26 +1030,38 @@
             const modalContent = document.getElementById('modalContent');
             const adminNotes = document.getElementById('adminNotes');
             
-            modalTitle.textContent = `${action.charAt(0).toUpperCase() + action.slice(1)} Application`;
+            const actionText = action === 'approve' ? 'Approve' : 'Reject';
+            const actionStatus = action === 'approve' ? 'approved' : 'rejected';
+            
+            modalTitle.textContent = `${actionText} Application`;
             adminNotes.style.display = 'block';
             adminNotes.value = '';
+            adminNotes.placeholder = action === 'approve' ? 
+                'Add congratulatory notes or next steps (optional)...' : 
+                'Add reason for rejection or feedback (optional)...';
             
             modalContent.innerHTML = `
-                <p>Are you sure you want to <strong>${action}</strong> this application?</p>
-                <p>An email notification will be sent to the applicant automatically.</p>
+                <p>Are you sure you want to <strong>${actionText.toLowerCase()}</strong> this application?</p>
+                <p><i class="fas fa-envelope"></i> An email notification will be sent to the applicant automatically.</p>
             `;
 
-            // Show action buttons
+            // Show action buttons based on the specific action
             const modalActions = document.querySelector('.modal-actions');
-            modalActions.innerHTML = `
-                <button class="btn" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-danger" onclick="makeDecision('rejected')">
-                    <i class="fas fa-times"></i> Reject
-                </button>
-                <button class="btn btn-success" onclick="makeDecision('approved')">
-                    <i class="fas fa-check"></i> Approve
-                </button>
-            `;
+            if (action === 'approve') {
+                modalActions.innerHTML = `
+                    <button class="btn" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-success" onclick="makeDecision('approved')">
+                        <i class="fas fa-check"></i> Approve & Send Email
+                    </button>
+                `;
+            } else {
+                modalActions.innerHTML = `
+                    <button class="btn" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-danger" onclick="makeDecision('rejected')">
+                        <i class="fas fa-times"></i> Reject & Send Email
+                    </button>
+                `;
+            }
 
             modal.classList.add('show');
         }
@@ -1065,6 +1077,12 @@
             
             const token = localStorage.getItem('adminToken');
             const adminNotes = document.getElementById('adminNotes').value;
+
+            // Show loading state
+            const submitBtn = document.querySelector('.modal-actions .btn-success, .modal-actions .btn-danger');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            submitBtn.disabled = true;
 
             try {
                 const response = await fetch(`/api/admin/inscriptions/${currentInscriptionId}/status`, {
@@ -1082,15 +1100,19 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    showAlert(`Application ${status} successfully! Email notification sent.`, 'success');
+                    showAlert(result.message || `Application ${status} successfully! Email notification sent.`, 'success');
                     closeModal();
                     loadDashboard(); // Refresh both stats and inscriptions
                 } else {
-                    showAlert(result.message);
+                    showAlert(result.message || 'Failed to update application status');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
                 }
             } catch (error) {
                 console.error('Error making decision:', error);
-                showAlert('Failed to update application status');
+                showAlert('Failed to update application status. Please check your connection and try again.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
             }
         }
 
