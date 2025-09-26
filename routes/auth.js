@@ -94,7 +94,12 @@ router.post('/login', authLimiter, async (req, res) => {
 });
 
 // POST /api/auth/verify - Verify JWT token
-router.post('/verify', (req, res) => {
+router.post('/verify', verifyToken);
+
+// GET /api/auth/verify - Verify JWT token (for frontend compatibility)
+router.get('/verify', verifyToken);
+
+function verifyToken(req, res) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
@@ -124,6 +129,16 @@ router.post('/verify', (req, res) => {
         }
       }
     });
+  });
+}
+
+// POST /api/auth/logout - Logout user
+router.post('/logout', (req, res) => {
+  // For stateless JWT, we just send success response
+  // In a production app, you might want to blacklist the token
+  res.json({
+    success: true,
+    message: 'Logged out successfully'
   });
 });
 

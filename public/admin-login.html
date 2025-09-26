@@ -303,8 +303,9 @@
                         localStorage.setItem('adminToken', result.data.token);
                         localStorage.setItem('adminUser', JSON.stringify(result.data.user));
                         
+                        console.log('Login successful, redirecting to admin dashboard');
                         // Redirect to admin dashboard
-                        window.location.href = '/admin';
+                        window.location.replace('/admin');
                     } else {
                         showAlert(result.message);
                     }
@@ -319,6 +320,7 @@
             // Check if already logged in
             const token = localStorage.getItem('adminToken');
             if (token) {
+                console.log('Token found, verifying...');
                 // Verify token
                 fetch('/api/auth/verify', {
                     headers: {
@@ -327,12 +329,15 @@
                 }).then(response => response.json())
                 .then(result => {
                     if (result.success) {
-                        window.location.href = '/admin';
+                        console.log('Token valid, redirecting to admin dashboard');
+                        window.location.replace('/admin');
                     } else {
+                        console.log('Token invalid, removing from storage');
                         localStorage.removeItem('adminToken');
                         localStorage.removeItem('adminUser');
                     }
-                }).catch(() => {
+                }).catch((error) => {
+                    console.error('Token verification error:', error);
                     localStorage.removeItem('adminToken');
                     localStorage.removeItem('adminUser');
                 });
