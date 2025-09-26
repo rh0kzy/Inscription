@@ -41,52 +41,61 @@ app.use(limiter);
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Initialize database
-Database.init().then((dbType) => {
-  console.log(`📊 Using ${dbType} database`);
-}).catch((err) => {
-  console.error('❌ Database initialization failed:', err.message);
-  process.exit(1);
-});
+// Initialize database first, then setup routes and start server
+async function startServer() {
+  try {
+    // Initialize database
+    const dbType = await Database.init();
+    console.log(`📊 Using ${dbType} database`);
+    
+    // Setup routes after database is initialized
+    app.use('/api/inscriptions', inscriptionRoutes);
+    app.use('/api/admin', adminRoutes);
+    app.use('/api/auth', authRoutes);
 
-// Routes
-app.use('/api/inscriptions', inscriptionRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/auth', authRoutes);
+    // Serve main pages
+    app.get('/', (req, res) => {
+      res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    });
 
-// Serve main pages
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+    app.get('/admin', (req, res) => {
+      res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+    });
 
-app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
-});
+    app.get('/admin/login', (req, res) => {
+      res.sendFile(path.join(__dirname, 'public', 'admin-login.html'));
+    });
 
-app.get('/admin/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin-login.html'));
-});
+    // Error handling middleware
+    app.use((err, req, res, next) => {
+      console.error(err.stack);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Something went wrong!',
+        error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+      });
+    });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ 
-    success: false, 
-    message: 'Something went wrong!',
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
-  });
-});
+    // 404 handler
+    app.use('*', (req, res) => {
+      res.status(404).json({ 
+        success: false, 
+        message: 'Route not found' 
+      });
+    });
 
-// 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({ 
-    success: false, 
-    message: 'Route not found' 
-  });
-});
+    // Start the server only after everything is initialized
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📝 Registration form: http://localhost:${PORT}`);
+      console.log(`👨‍💼 Admin dashboard: http://localhost:${PORT}/admin`);
+    });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📝 Registration form: http://localhost:${PORT}`);
-  console.log(`👨‍💼 Admin dashboard: http://localhost:${PORT}/admin`);
-});
+  } catch (err) {
+    console.error('❌ Database initialization failed:', err.message);
+    process.exit(1);
+  }
+}
+
+// Start the server
+startServer();
