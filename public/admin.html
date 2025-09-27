@@ -69,6 +69,17 @@
             padding: 30px 20px;
         }
 
+        /* Prevent horizontal scroll */
+        body {
+            overflow-x: hidden;
+        }
+
+        /* Ensure content doesn't overflow */
+        * {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -184,6 +195,11 @@
             overflow: hidden;
         }
 
+        .inscriptions-table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .section-header {
             padding: 25px;
             border-bottom: 1px solid #eee;
@@ -248,6 +264,7 @@
         .actions {
             display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -259,7 +276,15 @@
             font-weight: 500;
             transition: all 0.3s ease;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            min-width: 70px;
+        }
+
+        .btn i {
+            margin-right: 4px;
         }
 
         .btn-primary {
@@ -355,6 +380,32 @@
             max-width: 500px;
             max-height: 80vh;
             overflow-y: auto;
+            position: relative;
+        }
+
+        /* Touch-friendly improvements */
+        .btn, .filter-btn, .logout-btn {
+            min-height: 44px; /* iOS recommended touch target size */
+            touch-action: manipulation; /* Prevents double-tap zoom */
+        }
+
+        .inscriptions-table th,
+        .inscriptions-table td {
+            min-height: 40px;
+            vertical-align: middle;
+        }
+
+        /* Improve form inputs for mobile */
+        input, select, textarea {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 8px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
         }
 
         .modal-header {
@@ -430,37 +481,250 @@
         }
 
         @media (max-width: 768px) {
+            .header {
+                padding: 15px 0;
+            }
+
             .header-content {
                 flex-direction: column;
                 gap: 15px;
+                text-align: center;
+            }
+
+            .header-content h1 {
+                font-size: 1.8rem;
+            }
+
+            .container {
+                padding: 20px 15px;
             }
 
             .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
                 gap: 15px;
+            }
+
+            .stat-card {
+                padding: 20px 15px;
+            }
+
+            .stat-card .number {
+                font-size: 1.8em;
             }
 
             .filter-row {
                 grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .filters {
+                padding: 20px 15px;
+            }
+
+            /* Make table responsive with horizontal scroll */
+            .inscriptions-table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
             }
 
             .inscriptions-table {
-                font-size: 0.9em;
+                min-width: 800px;
+                font-size: 0.85em;
             }
 
             .inscriptions-table th,
             .inscriptions-table td {
-                padding: 10px 8px;
+                padding: 8px 6px;
+                white-space: nowrap;
             }
 
             .actions {
                 flex-direction: column;
+                gap: 5px;
+                min-width: 120px;
+            }
+
+            .actions .btn {
+                font-size: 0.75em;
+                padding: 4px 8px;
+                width: 100%;
+                justify-content: center;
             }
 
             .modal-content {
-                margin: 20px;
-                padding: 20px;
+                margin: 10px;
+                padding: 20px 15px;
+                width: calc(100% - 20px);
+                max-height: 90vh;
             }
+
+            .modal-header h4 {
+                font-size: 1.2rem;
+            }
+
+            .pagination {
+                flex-wrap: wrap;
+                gap: 5px;
+                padding: 20px 15px;
+            }
+
+            .pagination button {
+                padding: 6px 10px;
+                font-size: 0.9em;
+                min-width: 40px;
+            }
+
+            /* Hide less important columns on mobile */
+            .inscriptions-table .mobile-hide {
+                display: none;
+            }
+
+            /* Compact user info */
+            .user-info {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            #adminName {
+                font-size: 0.9rem;
+            }
+
+            .logout-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Additional breakpoint for very small screens */
+        @media (max-width: 480px) {
+            .header-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                padding: 15px 10px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 15px 10px;
+            }
+
+            .stat-card .number {
+                font-size: 1.6em;
+            }
+
+            .stat-card .icon {
+                font-size: 2em;
+            }
+
+            .filters {
+                padding: 15px 10px;
+            }
+
+            .inscriptions-table {
+                font-size: 0.8em;
+            }
+
+            .actions .btn {
+                font-size: 0.7em;
+                padding: 3px 6px;
+            }
+
+            .modal-content {
+                margin: 5px;
+                padding: 15px 10px;
+            }
+
+            /* Stack filter elements vertically on very small screens */
+            .filter-group label {
+                font-size: 0.85em;
+            }
+
+            .filter-group input,
+            .filter-group select {
+                font-size: 0.9em;
+                padding: 8px;
+            }
+
+            .pagination button {
+                padding: 5px 8px;
+                font-size: 0.8em;
+                min-width: 35px;
+            }
+        }
+
+        /* Card layout for very small screens */
+        @media (max-width: 600px) {
+            .inscriptions-table-container {
+                display: none;
+            }
+
+            .inscriptions-cards {
+                display: block;
+            }
+
+            .inscription-card {
+                background: white;
+                border: 1px solid #eee;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 15px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+            .card-name {
+                font-weight: bold;
+                color: #333;
+                font-size: 1.1em;
+            }
+
+            .card-info {
+                margin-bottom: 8px;
+            }
+
+            .card-info label {
+                font-weight: 600;
+                color: #666;
+                font-size: 0.85em;
+                margin-right: 8px;
+            }
+
+            .card-actions {
+                margin-top: 15px;
+                padding-top: 10px;
+                border-top: 1px solid #f0f0f0;
+            }
+
+            .card-actions .actions {
+                justify-content: space-between;
+                gap: 8px;
+            }
+
+            .card-actions .btn {
+                flex: 1;
+                font-size: 0.8em;
+                padding: 8px 12px;
+            }
+        }
+
+        /* Hide cards by default, show table */
+        .inscriptions-cards {
+            display: none;
         }
 
         .alert {
@@ -984,25 +1248,26 @@
             }
 
             const tableHTML = `
-                <table class="inscriptions-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Program</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${inscriptions.map(inscription => `
+                <div class="inscriptions-table-container">
+                    <table class="inscriptions-table">
+                        <thead>
                             <tr>
-                                <td><strong>${inscription.first_name} ${inscription.last_name}</strong></td>
-                                <td>${inscription.email}</td>
-                                <td>${inscription.program}</td>
-                                <td><span class="status ${inscription.status}">${inscription.status}</span></td>
-                                <td>${new Date(inscription.created_at).toLocaleDateString()}</td>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th class="mobile-hide">Program</th>
+                                <th>Status</th>
+                                <th class="mobile-hide">Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${inscriptions.map(inscription => `
+                                <tr>
+                                    <td><strong>${inscription.first_name} ${inscription.last_name}</strong></td>
+                                    <td>${inscription.email}</td>
+                                    <td class="mobile-hide">${inscription.program}</td>
+                                    <td><span class="status ${inscription.status}">${inscription.status}</span></td>
+                                    <td class="mobile-hide">${new Date(inscription.created_at).toLocaleDateString()}</td>
                                 <td>
                                     <div class="actions">
                                         <button class="btn btn-primary view-inscription-btn" data-inscription-id="${inscription.id}">
@@ -1025,6 +1290,48 @@
                         `).join('')}
                     </tbody>
                 </table>
+                </div>
+                
+                <!-- Mobile Card Layout -->
+                <div class="inscriptions-cards">
+                    ${inscriptions.map(inscription => `
+                        <div class="inscription-card">
+                            <div class="card-header">
+                                <div class="card-name">${inscription.first_name} ${inscription.last_name}</div>
+                                <span class="status ${inscription.status}">${inscription.status}</span>
+                            </div>
+                            
+                            <div class="card-info">
+                                <label>Email:</label> ${inscription.email}
+                            </div>
+                            <div class="card-info">
+                                <label>Program:</label> ${inscription.program}
+                            </div>
+                            <div class="card-info">
+                                <label>Date:</label> ${new Date(inscription.created_at).toLocaleDateString()}
+                            </div>
+                            
+                            <div class="card-actions">
+                                <div class="actions">
+                                    <button class="btn btn-primary view-inscription-btn" data-inscription-id="${inscription.id}">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                    ${inscription.status === 'pending' ? `
+                                        <button class="btn btn-success approve-btn" data-inscription-id="${inscription.id}">
+                                            <i class="fas fa-check"></i> Approve
+                                        </button>
+                                        <button class="btn btn-danger reject-btn" data-inscription-id="${inscription.id}">
+                                            <i class="fas fa-times"></i> Reject
+                                        </button>
+                                    ` : ''}
+                                    <button class="btn btn-danger delete-btn" data-inscription-id="${inscription.id}" title="Delete this inscription permanently">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
             `;
 
             container.innerHTML = tableHTML;
