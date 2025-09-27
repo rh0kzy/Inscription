@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Routes Verification Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 50px auto; padding: 20px; }
+        .test-section { margin: 30px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .test-item { margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 4px; }
+        .status { font-weight: bold; }
+        .success { color: green; }
+        .error { color: red; }
+        .pending { color: orange; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 URL Routes Verification</h1>
+    
+    <div class="test-section">
+        <h2>Frontend Routes Test</h2>
+        <button onclick="testFrontendRoutes()">Test All Frontend Routes</button>
+        <div id="frontend-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>API Routes Test</h2>
+        <button onclick="testApiRoutes()">Test All API Routes</button>
+        <div id="api-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Environment Detection</h2>
+        <div id="environment-results"></div>
+    </div>
+
+    <script src="/js/api-config.js"></script>
+    <script>
+        // Test frontend routes
+        async function testFrontendRoutes() {
+            const resultsDiv = document.getElementById('frontend-results');
+            resultsDiv.innerHTML = '<p>Testing frontend routes...</p>';
+            
+            const routes = [
+                { name: 'Home Page', url: '/' },
+                { name: 'Admin Dashboard', url: '/admin' },
+                { name: 'Admin Login', url: '/admin/login' },
+                { name: 'Admin Dashboard (Direct)', url: '/admin.html' },
+                { name: 'Admin Login (Direct)', url: '/admin-login.html' },
+                { name: 'Endpoint Test', url: '/endpoint-test.html' },
+                { name: 'Login Debug Test', url: '/login-debug-test.html' }
+            ];
+
+            let html = '<h3>Frontend Route Tests:</h3>';
+            
+            for (const route of routes) {
+                try {
+                    const response = await fetch(route.url, { method: 'HEAD' });
+                    const status = response.ok ? 'success' : 'error';
+                    const statusText = response.ok ? '✅ Accessible' : `❌ Error (${response.status})`;
+                    
+                    html += `
+                        <div class="test-item">
+                            <strong>${route.name}</strong>: <span class="status ${status}">${statusText}</span><br>
+                            <small>URL: ${route.url} → Status: ${response.status}</small>
+                        </div>
+                    `;
+                } catch (error) {
+                    html += `
+                        <div class="test-item">
+                            <strong>${route.name}</strong>: <span class="status error">❌ Network Error</span><br>
+                            <small>URL: ${route.url} → Error: ${error.message}</small>
+                        </div>
+                    `;
+                }
+            }
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        // Test API routes
+        async function testApiRoutes() {
+            const resultsDiv = document.getElementById('api-results');
+            resultsDiv.innerHTML = '<p>Testing API routes...</p>';
+            
+            const apiTests = [
+                { 
+                    name: 'Auth Login', 
+                    endpoint: API_ENDPOINTS.auth.login,
+                    method: 'POST',
+                    body: { email: 'admin@example.com', password: 'admin123' }
+                },
+                { 
+                    name: 'Auth Verify (OPTIONS)', 
+                    endpoint: API_ENDPOINTS.auth.verify,
+                    method: 'OPTIONS'
+                },
+                { 
+                    name: 'Admin Stats (OPTIONS)', 
+                    endpoint: API_ENDPOINTS.admin.stats,
+                    method: 'OPTIONS'
+                },
+                { 
+                    name: 'Inscriptions (OPTIONS)', 
+                    endpoint: API_ENDPOINTS.inscriptions.create,
+                    method: 'OPTIONS'
+                }
+            ];
+
+            let html = '<h3>API Endpoint Tests:</h3>';
+            html += `<p><strong>Base URL:</strong> ${isProduction ? 'Production' : 'Development'} - ${config.baseURL}</p>`;
+            
+            for (const test of apiTests) {
+                try {
+                    const options = {
+                        method: test.method,
+                        headers: { 'Content-Type': 'application/json' }
+                    };
+                    
+                    if (test.body && test.method === 'POST') {
+                        options.body = JSON.stringify(test.body);
+                    }
+                    
+                    const response = await fetch(test.endpoint, options);
+                    const statusClass = response.status < 400 ? 'success' : (response.status < 500 ? 'pending' : 'error');
+                    const statusIcon = response.status < 400 ? '✅' : (response.status < 500 ? '⚠️' : '❌');
+                    
+                    html += `
+                        <div class="test-item">
+                            <strong>${test.name}</strong>: <span class="status ${statusClass}">${statusIcon} ${response.status}</span><br>
+                            <small>${test.method} ${test.endpoint}</small>
+                        </div>
+                    `;
+                } catch (error) {
+                    html += `
+                        <div class="test-item">
+                            <strong>${test.name}</strong>: <span class="status error">❌ Network Error</span><br>
+                            <small>${test.method} ${test.endpoint} → ${error.message}</small>
+                        </div>
+                    `;
+                }
+            }
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        // Display environment info
+        function displayEnvironmentInfo() {
+            const resultsDiv = document.getElementById('environment-results');
+            
+            const envInfo = {
+                hostname: window.location.hostname,
+                protocol: window.location.protocol,
+                port: window.location.port || 'default',
+                environment: isProduction ? 'Production' : 'Development',
+                apiBaseUrl: config.baseURL
+            };
+            
+            let html = '<h3>Environment Detection:</h3>';
+            html += '<pre>' + JSON.stringify(envInfo, null, 2) + '</pre>';
+            
+            html += '<h4>Resolved API Endpoints:</h4>';
+            html += '<pre>' + JSON.stringify(API_ENDPOINTS, null, 2) + '</pre>';
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            displayEnvironmentInfo();
+        });
+    </script>
+</body>
+</html>
