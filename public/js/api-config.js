@@ -15,7 +15,7 @@ const config = isProduction ? API_CONFIG.production : API_CONFIG.development;
 // API endpoints
 const API_ENDPOINTS = {
   auth: {
-    login: `${config.baseURL}/auth-login`,
+    login: `${config.baseURL}/auth-login-debug`,
     verify: `${config.baseURL}/auth-verify`,
     logout: `${config.baseURL}/auth-logout`
   },
