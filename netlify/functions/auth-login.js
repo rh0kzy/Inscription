@@ -1,20 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Database configuration
-const { Pool } = require('pg');
-let pool;
-
-function initializeDatabase() {
-  if (!pool) {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false }
-    });
-  }
-  return pool;
-}
-
 exports.handler = async (event, context) => {
   // Handle CORS preflight requests
   if (event.httpMethod === 'OPTIONS') {
@@ -65,7 +51,7 @@ exports.handler = async (event, context) => {
     const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
     const jwtSecret = process.env.JWT_SECRET || 'inscription-system-jwt-secret-key-2024';
 
-    // Check if this is the default admin
+    // Check if this is the admin
     if (email === adminEmail && password === adminPassword) {
       const token = jwt.sign(
         { 
@@ -96,68 +82,16 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // For database users (if you want to add more admin users later)
-    const db = initializeDatabase();
-    const result = await db.query('SELECT * FROM admins WHERE email = $1', [email]);
-    
-    if (result.rows.length === 0) {
-      return {
-        statusCode: 401,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          success: false,
-          message: 'Invalid email or password'
-        })
-      };
-    }
-
-    const admin = result.rows[0];
-    const isValidPassword = await bcrypt.compare(password, admin.password);
-
-    if (!isValidPassword) {
-      return {
-        statusCode: 401,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          success: false,
-          message: 'Invalid email or password'
-        })
-      };
-    }
-
-    const token = jwt.sign(
-      { 
-        id: admin.id,
-        email: admin.email,
-        role: admin.role,
-        name: admin.name
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
+    // Invalid credentials
     return {
-      statusCode: 200,
+      statusCode: 401,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        success: true,
-        message: 'Login successful',
-        token: token,
-        user: {
-          id: admin.id,
-          email: admin.email,
-          name: admin.name,
-          role: admin.role
-        }
+        success: false,
+        message: 'Invalid email or password'
       })
     };
 
@@ -171,7 +105,8 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({
         success: false,
-        message: 'Internal server error'
+        message: 'Internal server error',
+        error: error.message
       })
     };
   }
