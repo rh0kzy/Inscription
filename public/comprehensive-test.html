@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive System Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .test-section { 
+            background: white; 
+            margin: 15px 0; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        .success { color: #27ae60; }
+        .error { color: #e74c3c; }
+        .info { color: #3498db; }
+        .warning { color: #f39c12; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+        button { 
+            padding: 10px 20px; 
+            margin: 5px; 
+            cursor: pointer; 
+            border: none; 
+            border-radius: 4px;
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        button:hover { background: #2980b9; }
+        button:disabled { background: #bdc3c7; cursor: not-allowed; }
+        .status-indicator { 
+            display: inline-block; 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 50%; 
+            margin-right: 8px;
+        }
+        .status-success { background: #27ae60; }
+        .status-error { background: #e74c3c; }
+        .status-pending { background: #f39c12; }
+        .progress-bar {
+            background: #ecf0f1;
+            border-radius: 10px;
+            padding: 3px;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            height: 20px;
+            border-radius: 8px;
+            width: 0%;
+            transition: width 0.3s;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Comprehensive System Test - Inscription Approval/Rejection</h1>
+        <p>This page will test the entire workflow from inscription creation to email notifications.</p>
+        
+        <div class="test-section">
+            <h3><span class="status-indicator status-pending" id="progress-indicator"></span>Test Progress</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill">0%</div>
+            </div>
+            <p id="current-test">Ready to start testing...</p>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Run Complete Test Suite</h3>
+            <button onclick="runAllTests()" id="runTestsBtn">Run All Tests</button>
+            <button onclick="clearResults()">Clear Results</button>
+            <div id="testResults"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📊 Test Results Summary</h3>
+            <div id="testSummary">
+                <p>No tests run yet.</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>📧 Email Verification</h3>
+            <p>After running tests, check the email account: <strong>inscriptiondecision@gmail.com</strong></p>
+            <p>You should see:</p>
+            <ul>
+                <li>✅ Approval email for the approved test inscription</li>
+                <li>❌ Rejection email for the rejected test inscription</li>
+                <li>📧 Both emails with professional formatting and content</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let testStep = 0;
+        const totalSteps = 8;
+        let testResults = [];
+        let adminToken = null;
+
+        function updateProgress(step, message) {
+            const progress = Math.round((step / totalSteps) * 100);
+            document.getElementById('progress-fill').style.width = progress + '%';
+            document.getElementById('progress-fill').textContent = progress + '%';
+            document.getElementById('current-test').textContent = message;
+            
+            const indicator = document.getElementById('progress-indicator');
+            if (progress === 100) {
+                indicator.className = 'status-indicator status-success';
+            } else {
+                indicator.className = 'status-indicator status-pending';
+            }
+        }
+
+        function logResult(step, title, success, message, data = null) {
+            testResults.push({ step, title, success, message, data });
+            
+            const resultsDiv = document.getElementById('testResults');
+            const className = success ? 'success' : 'error';
+            const icon = success ? '✅' : '❌';
+            
+            resultsDiv.innerHTML += `
+                <div class="test-result">
+                    <h4 class="${className}">${icon} Step ${step}: ${title}</h4>
+                    <p class="${className}">${message}</p>
+                    ${data ? `<pre>${JSON.stringify(data, null, 2)}</pre>` : ''}
+                </div>
+            `;
+        }
+
+        function updateSummary() {
+            const successCount = testResults.filter(r => r.success).length;
+            const totalCount = testResults.length;
+            const summaryDiv = document.getElementById('testSummary');
+            
+            const successRate = Math.round((successCount / totalCount) * 100);
+            const overallSuccess = successCount === totalCount;
+            
+            summaryDiv.innerHTML = `
+                <div class="${overallSuccess ? 'success' : 'error'}">
+                    <h4>${overallSuccess ? '🎉 All Tests Passed!' : '⚠️ Some Tests Failed'}</h4>
+                    <p>Success Rate: ${successCount}/${totalCount} (${successRate}%)</p>
+                    ${overallSuccess ? 
+                        '<p><strong>✅ The approve/reject functionality is working correctly!</strong></p>' :
+                        '<p><strong>❌ There are issues that need to be addressed.</strong></p>'
+                    }
+                </div>
+            `;
+        }
+
+        async function runAllTests() {
+            const button = document.getElementById('runTestsBtn');
+            button.disabled = true;
+            button.textContent = 'Testing...';
+            
+            testResults = [];
+            document.getElementById('testResults').innerHTML = '';
+            testStep = 0;
+
+            try {
+                // Step 1: Admin Login
+                testStep = 1;
+                updateProgress(testStep, 'Testing admin login...');
+                
+                const loginResponse = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'admin@example.com',
+                        password: 'admin123'
+                    })
+                });
+                
+                const loginResult = await loginResponse.json();
+                if (loginResult.success) {
+                    adminToken = loginResult.token;
+                    logResult(1, 'Admin Login', true, 'Successfully logged in as admin');
+                } else {
+                    logResult(1, 'Admin Login', false, `Login failed: ${loginResult.message}`);
+                    throw new Error('Cannot proceed without admin authentication');
+                }
+
+                // Step 2: Create Test Inscription
+                testStep = 2;
+                updateProgress(testStep, 'Creating test inscription...');
+                
+                const testData = {
+                    firstName: 'John',
+                    lastName: 'TestUser',
+                    email: 'johntestuser@example.com',
+                    phone: '+1234567890',
+                    birthDate: '1995-05-15',
+                    address: '123 Test Street',
+                    city: 'Test City',
+                    postalCode: '12345',
+                    country: 'Test Country',
+                    program: 'Computer Science',
+                    motivation: 'This is a comprehensive test inscription for approval functionality.'
+                };
+                
+                const createResponse = await fetch('/api/inscriptions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testData)
+                });
+                
+                const createResult = await createResponse.json();
+                let testInscriptionId = null;
+                
+                if (createResult.success) {
+                    testInscriptionId = createResult.data.id;
+                    logResult(2, 'Create Test Inscription', true, `Inscription created with ID: ${testInscriptionId}`);
+                } else {
+                    logResult(2, 'Create Test Inscription', false, `Failed to create inscription: ${createResult.message}`);
+                    throw new Error('Cannot proceed without test data');
+                }
+
+                // Step 3: Verify Inscription in Admin Panel
+                testStep = 3;
+                updateProgress(testStep, 'Verifying inscription appears in admin panel...');
+                
+                const getResponse = await fetch('/api/admin/inscriptions', {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                
+                const getResult = await getResponse.json();
+                if (getResult.success) {
+                    const inscription = getResult.data.inscriptions.find(i => i.id == testInscriptionId);
+                    if (inscription) {
+                        logResult(3, 'Verify Inscription Retrieval', true, `Found inscription with status: ${inscription.status}`);
+                    } else {
+                        logResult(3, 'Verify Inscription Retrieval', false, 'Test inscription not found in admin panel');
+                        throw new Error('Test inscription not accessible');
+                    }
+                } else {
+                    logResult(3, 'Verify Inscription Retrieval', false, `Failed to retrieve inscriptions: ${getResult.message}`);
+                    throw new Error('Cannot access admin inscriptions');
+                }
+
+                // Step 4: Test Approval Process
+                testStep = 4;
+                updateProgress(testStep, 'Testing approval process...');
+                
+                const approveResponse = await fetch(`/api/admin/inscriptions/${testInscriptionId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: 'approved',
+                        admin_notes: 'Congratulations! Your application has been approved after comprehensive testing.'
+                    })
+                });
+                
+                const approveResult = await approveResponse.json();
+                if (approveResult.success) {
+                    logResult(4, 'Test Approval Process', true, `Approval successful! ${approveResult.message}`);
+                } else {
+                    logResult(4, 'Test Approval Process', false, `Approval failed: ${approveResult.message}`);
+                }
+
+                // Step 5: Create Second Test for Rejection
+                testStep = 5;
+                updateProgress(testStep, 'Creating second test inscription for rejection...');
+                
+                const testData2 = {
+                    firstName: 'Jane',
+                    lastName: 'TestReject',
+                    email: 'janetestuser@example.com',
+                    phone: '+1987654321',
+                    birthDate: '1992-08-20',
+                    address: '456 Test Avenue',
+                    city: 'Test City',
+                    postalCode: '54321',
+                    country: 'Test Country',
+                    program: 'Data Science',
+                    motivation: 'This is a comprehensive test inscription for rejection functionality.'
+                };
+                
+                const createResponse2 = await fetch('/api/inscriptions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testData2)
+                });
+                
+                const createResult2 = await createResponse2.json();
+                let testInscriptionId2 = null;
+                
+                if (createResult2.success) {
+                    testInscriptionId2 = createResult2.data.id;
+                    logResult(5, 'Create Second Test Inscription', true, `Second inscription created with ID: ${testInscriptionId2}`);
+                } else {
+                    logResult(5, 'Create Second Test Inscription', false, `Failed to create second inscription: ${createResult2.message}`);
+                }
+
+                // Step 6: Test Rejection Process
+                if (testInscriptionId2) {
+                    testStep = 6;
+                    updateProgress(testStep, 'Testing rejection process...');
+                    
+                    const rejectResponse = await fetch(`/api/admin/inscriptions/${testInscriptionId2}/status`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': `Bearer ${adminToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            status: 'rejected',
+                            admin_notes: 'Thank you for your interest. Unfortunately, we cannot offer you a position at this time due to high competition. We encourage you to apply again next year.'
+                        })
+                    });
+                    
+                    const rejectResult = await rejectResponse.json();
+                    if (rejectResult.success) {
+                        logResult(6, 'Test Rejection Process', true, `Rejection successful! ${rejectResult.message}`);
+                    } else {
+                        logResult(6, 'Test Rejection Process', false, `Rejection failed: ${rejectResult.message}`);
+                    }
+                }
+
+                // Step 7: Verify Final States
+                testStep = 7;
+                updateProgress(testStep, 'Verifying final inscription states...');
+                
+                const finalResponse = await fetch('/api/admin/inscriptions', {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+                
+                const finalResult = await finalResponse.json();
+                if (finalResult.success) {
+                    const approvedInscription = finalResult.data.inscriptions.find(i => i.id == testInscriptionId);
+                    const rejectedInscription = finalResult.data.inscriptions.find(i => i.id == testInscriptionId2);
+                    
+                    if (approvedInscription?.status === 'approved' && rejectedInscription?.status === 'rejected') {
+                        logResult(7, 'Verify Final States', true, 'Both inscriptions have correct final states');
+                    } else {
+                        logResult(7, 'Verify Final States', false, 'Inscription states may not be correct');
+                    }
+                } else {
+                    logResult(7, 'Verify Final States', false, 'Could not verify final states');
+                }
+
+                // Step 8: Complete
+                testStep = 8;
+                updateProgress(testStep, 'All tests completed!');
+                logResult(8, 'Test Completion', true, 'All comprehensive tests have been executed successfully');
+
+            } catch (error) {
+                logResult(testStep, 'Test Execution', false, `Error: ${error.message}`);
+                document.getElementById('progress-indicator').className = 'status-indicator status-error';
+            }
+
+            updateSummary();
+            button.disabled = false;
+            button.textContent = 'Run All Tests';
+        }
+
+        function clearResults() {
+            document.getElementById('testResults').innerHTML = '';
+            document.getElementById('testSummary').innerHTML = '<p>No tests run yet.</p>';
+            document.getElementById('progress-fill').style.width = '0%';
+            document.getElementById('progress-fill').textContent = '0%';
+            document.getElementById('current-test').textContent = 'Ready to start testing...';
+            document.getElementById('progress-indicator').className = 'status-indicator status-pending';
+            testResults = [];
+            testStep = 0;
+        }
+    </script>
+</body>
+</html>
