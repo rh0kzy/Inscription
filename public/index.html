@@ -84,6 +84,17 @@
             font-size: 1em;
             transition: all 0.3s ease;
             background-color: #fafbfc;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        .form-group select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 40px;
         }
 
         .form-group input:focus,
@@ -93,6 +104,88 @@
             border-color: #667eea;
             background-color: white;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Enhanced touch targets for mobile */
+        @media (hover: none) and (pointer: coarse) {
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                min-height: 48px;
+                padding: 14px;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+
+            .btn {
+                min-height: 48px;
+                padding: 16px 32px;
+                font-size: 16px;
+            }
+
+            .admin-link {
+                min-height: 44px;
+                padding: 12px 20px;
+                font-size: 16px;
+            }
+        }
+
+        /* Mobile device specific styles */
+        .mobile-device .form-group input:focus,
+        .mobile-device .form-group select:focus,
+        .mobile-device .form-group textarea:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .mobile-device .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Prevent horizontal scroll on very small screens */
+        @media (max-width: 320px) {
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                min-width: 0;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            
+            .container {
+                min-width: 0;
+                width: 100%;
+                box-sizing: border-box;
+            }
+        }
+
+        /* Improve select dropdown on mobile */
+        @media (max-width: 600px) {
+            .form-group select {
+                background-size: 20px;
+                background-position: right 10px center;
+                cursor: pointer;
+            }
+
+            .character-counter {
+                font-size: 0.8em !important;
+                text-align: center !important;
+                padding: 6px !important;
+                background-color: #f8f9fa !important;
+                border-radius: 6px !important;
+                margin-top: 8px !important;
+                border: 1px solid #e9ecef;
+            }
+        }
+
+        /* Additional mobile improvements */
+        @media (max-width: 480px) {
+            .character-counter {
+                font-size: 0.75em !important;
+                padding: 4px !important;
+            }
         }
 
         .form-group textarea {
@@ -209,36 +302,228 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
+        /* Tablet responsiveness */
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
             }
             
             .container {
-                margin: 10px;
+                margin: 15px;
                 border-radius: 15px;
             }
             
             .header {
-                padding: 30px 20px;
+                padding: 35px 25px;
             }
             
             .header h1 {
-                font-size: 2em;
+                font-size: 2.2em;
             }
             
             .form-container {
-                padding: 30px 20px;
+                padding: 35px 25px;
             }
 
             .admin-link {
                 position: relative;
                 top: auto;
                 right: auto;
-                margin: 20px auto;
+                margin: 15px auto;
                 display: block;
                 text-align: center;
                 width: fit-content;
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                margin: 5px;
+                border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            }
+            
+            .header {
+                padding: 25px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+                margin-bottom: 8px;
+                line-height: 1.2;
+            }
+
+            .header p {
+                font-size: 1em;
+                line-height: 1.4;
+            }
+            
+            .form-container {
+                padding: 25px 15px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .form-group label {
+                font-size: 0.9em;
+                margin-bottom: 6px;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 12px;
+                font-size: 16px; /* Prevents zoom on iOS */
+                border-radius: 8px;
+            }
+
+            .form-group textarea {
+                min-height: 100px;
+            }
+
+            .btn {
+                padding: 16px 30px;
+                font-size: 1em;
+                border-radius: 8px;
+                margin-top: 15px;
+                min-height: 50px; /* Touch-friendly height */
+            }
+
+            .admin-link {
+                margin: 10px auto;
+                padding: 8px 12px;
+                font-size: 0.85em;
+                border-radius: 20px;
+            }
+
+            .alert {
+                padding: 12px 15px;
+                font-size: 0.9em;
+                border-radius: 8px;
+            }
+        }
+
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                margin: 0;
+                border-radius: 10px;
+                min-height: calc(100vh - 10px);
+            }
+            
+            .header {
+                padding: 20px 12px;
+            }
+            
+            .header h1 {
+                font-size: 1.6em;
+                margin-bottom: 6px;
+            }
+
+            .header p {
+                font-size: 0.95em;
+            }
+            
+            .form-container {
+                padding: 20px 12px;
+            }
+
+            .form-group {
+                margin-bottom: 18px;
+            }
+
+            .form-group label {
+                font-size: 0.85em;
+                margin-bottom: 5px;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 10px;
+                font-size: 16px;
+                border-radius: 6px;
+            }
+
+            .form-group textarea {
+                min-height: 90px;
+            }
+
+            .btn {
+                padding: 14px 25px;
+                font-size: 0.95em;
+                border-radius: 6px;
+                margin-top: 12px;
+                min-height: 48px;
+                letter-spacing: 0.5px;
+            }
+
+            .admin-link {
+                margin: 8px auto;
+                padding: 6px 10px;
+                font-size: 0.8em;
+                border-radius: 18px;
+            }
+
+            .alert {
+                padding: 10px 12px;
+                font-size: 0.85em;
+                border-radius: 6px;
+                margin-bottom: 15px;
+            }
+
+            .error-list {
+                margin-top: 8px;
+                padding-left: 15px;
+            }
+
+            .loading {
+                gap: 8px;
+            }
+
+            .spinner {
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 360px) {
+            .header h1 {
+                font-size: 1.4em;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .form-container {
+                padding: 18px 10px;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 9px;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.9em;
+                min-height: 46px;
             }
         }
     </style>
@@ -363,6 +648,25 @@
             const loading = submitBtn.querySelector('.loading');
             const alertContainer = document.getElementById('alertContainer');
 
+            // Mobile-specific enhancements
+            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Add mobile class to body for mobile-specific styling
+                document.body.classList.add('mobile-device');
+                
+                // Improve form field focus behavior on mobile
+                const formFields = document.querySelectorAll('input, select, textarea');
+                formFields.forEach(field => {
+                    field.addEventListener('focus', function() {
+                        // Slight delay to ensure keyboard is up before scrolling
+                        setTimeout(() => {
+                            this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 300);
+                    });
+                });
+            }
+
             function showAlert(message, type = 'error', errors = []) {
                 alertContainer.innerHTML = `
                     <div class="alert alert-${type} show">
@@ -376,8 +680,13 @@
                     </div>
                 `;
                 
-                // Scroll to alert
-                alertContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Scroll to alert with better mobile positioning
+                setTimeout(() => {
+                    alertContainer.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: isMobile ? 'start' : 'center' 
+                    });
+                }, 100);
             }
 
             function hideAlert() {
@@ -458,13 +767,41 @@
             
             const counter = document.createElement('div');
             counter.style.cssText = 'font-size: 0.85em; color: #666; margin-top: 5px; text-align: right;';
+            counter.className = 'character-counter';
             motivationGroup.appendChild(counter);
+            
+            // Mobile-specific styling for character counter
+            if (isMobile) {
+                counter.style.fontSize = '0.8em';
+                counter.style.textAlign = 'center';
+                counter.style.padding = '4px';
+                counter.style.backgroundColor = '#f8f9fa';
+                counter.style.borderRadius = '4px';
+                counter.style.marginTop = '8px';
+            }
             
             motivationField.addEventListener('input', function() {
                 const length = this.value.length;
                 const min = 50;
-                counter.textContent = `${length}/${min} characters minimum`;
-                counter.style.color = length >= min ? '#28a745' : '#666';
+                const remaining = Math.max(0, min - length);
+                
+                if (length >= min) {
+                    counter.textContent = `✓ ${length} characters (requirement met)`;
+                    counter.style.color = '#28a745';
+                } else {
+                    counter.textContent = `${remaining} more characters needed (${length}/${min})`;
+                    counter.style.color = '#666';
+                }
+            });
+
+            // Improve form submission feedback on mobile
+            form.addEventListener('submit', function() {
+                if (isMobile) {
+                    // Haptic feedback if available
+                    if (navigator.vibrate) {
+                        navigator.vibrate(50);
+                    }
+                }
             });
         });
     </script>
