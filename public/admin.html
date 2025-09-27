@@ -648,25 +648,38 @@
 
             .filter-group input,
             .filter-group select {
-                font-size: 0.9em;
-                padding: 8px;
+                font-size: 16px; /* Prevents zoom on iOS */
+                padding: 10px;
+                border-radius: 6px;
+            }
+
+            .filter-btn {
+                font-size: 16px;
+                padding: 12px;
+                min-height: 48px;
             }
 
             .pagination button {
                 padding: 5px 8px;
                 font-size: 0.8em;
                 min-width: 35px;
+                min-height: 44px;
             }
+        }
+
+        /* Hide cards by default, show table */
+        .inscriptions-cards {
+            display: none !important;
         }
 
         /* Card layout for very small screens */
         @media (max-width: 600px) {
             .inscriptions-table-container {
-                display: none;
+                display: none !important;
             }
 
             .inscriptions-cards {
-                display: block;
+                display: block !important;
             }
 
             .inscription-card {
@@ -676,6 +689,8 @@
                 padding: 15px;
                 margin-bottom: 15px;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                width: 100%;
+                box-sizing: border-box;
             }
 
             .card-header {
@@ -685,16 +700,23 @@
                 margin-bottom: 10px;
                 padding-bottom: 10px;
                 border-bottom: 1px solid #f0f0f0;
+                flex-wrap: wrap;
+                gap: 10px;
             }
 
             .card-name {
                 font-weight: bold;
                 color: #333;
                 font-size: 1.1em;
+                flex: 1;
+                min-width: 150px;
             }
 
             .card-info {
                 margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
             }
 
             .card-info label {
@@ -702,6 +724,7 @@
                 color: #666;
                 font-size: 0.85em;
                 margin-right: 8px;
+                min-width: 60px;
             }
 
             .card-actions {
@@ -711,20 +734,60 @@
             }
 
             .card-actions .actions {
+                display: flex;
                 justify-content: space-between;
                 gap: 8px;
+                flex-wrap: wrap;
             }
 
             .card-actions .btn {
                 flex: 1;
                 font-size: 0.8em;
                 padding: 8px 12px;
+                min-width: 70px;
+                text-align: center;
+            }
+
+            .card-actions .actions .btn:only-child {
+                flex: 0 0 auto;
+                width: 100%;
             }
         }
 
-        /* Hide cards by default, show table */
-        .inscriptions-cards {
-            display: none;
+        /* Debug styles to ensure visibility */
+        @media (max-width: 600px) {
+            .inscriptions-cards {
+                background: #f8f9fa;
+                min-height: 50px;
+                padding: 10px;
+                border-radius: 8px;
+            }
+
+            .inscriptions-cards:empty::before {
+                content: "Loading inscriptions...";
+                color: #666;
+                font-style: italic;
+                display: block;
+                text-align: center;
+                padding: 20px;
+            }
+        }
+
+        /* Intermediate screen size handling */
+        @media (max-width: 900px) and (min-width: 601px) {
+            .inscriptions-table {
+                font-size: 0.9em;
+            }
+            
+            .inscriptions-table th,
+            .inscriptions-table td {
+                padding: 10px 8px;
+            }
+            
+            .actions .btn {
+                font-size: 0.85em;
+                padding: 6px 10px;
+            }
         }
 
         .alert {
