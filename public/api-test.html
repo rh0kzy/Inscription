@@ -20,13 +20,13 @@
 
     <div class="test-section">
         <h3>1. Admin Login Test</h3>
-        <button onclick="testLogin()">Test Admin Login</button>
+        <button id="testLoginBtn">Test Admin Login</button>
         <div id="loginResult"></div>
     </div>
 
     <div class="test-section">
         <h3>2. Get Inscriptions</h3>
-        <button onclick="getInscriptions()">Get All Inscriptions</button>
+        <button id="getInscriptionsBtn">Get All Inscriptions</button>
         <div id="inscriptionsResult"></div>
     </div>
 
@@ -34,14 +34,14 @@
         <h3>3. Test Approve/Reject</h3>
         <p>First get inscriptions, then test approve/reject:</p>
         <input type="number" id="inscriptionId" placeholder="Inscription ID">
-        <button onclick="testApprove()">Test Approve</button>
-        <button onclick="testReject()">Test Reject</button>
+        <button id="testApproveBtn">Test Approve</button>
+        <button id="testRejectBtn">Test Reject</button>
         <div id="approveRejectResult"></div>
     </div>
 
     <div class="test-section">
         <h3>4. Create Test Inscription</h3>
-        <button onclick="createTestInscription()">Create Test Data</button>
+        <button id="createTestBtn">Create Test Data</button>
         <div id="createResult"></div>
     </div>
 
@@ -194,7 +194,18 @@
         if (adminToken) {
             document.addEventListener('DOMContentLoaded', () => {
                 log('loginResult', '✅ Using existing token: ' + adminToken, 'success');
+                setupEventListeners();
             });
+        } else {
+            document.addEventListener('DOMContentLoaded', setupEventListeners);
+        }
+
+        function setupEventListeners() {
+            document.getElementById('testLoginBtn').addEventListener('click', testLogin);
+            document.getElementById('getInscriptionsBtn').addEventListener('click', getInscriptions);
+            document.getElementById('testApproveBtn').addEventListener('click', testApprove);
+            document.getElementById('testRejectBtn').addEventListener('click', testReject);
+            document.getElementById('createTestBtn').addEventListener('click', createTestInscription);
         }
     </script>
 </body>

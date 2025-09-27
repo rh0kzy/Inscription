@@ -76,8 +76,8 @@
 
         <div class="test-section">
             <h3>🚀 Run Complete Test Suite</h3>
-            <button onclick="runAllTests()" id="runTestsBtn">Run All Tests</button>
-            <button onclick="clearResults()">Clear Results</button>
+            <button id="runTestsBtn">Run All Tests</button>
+            <button id="clearResultsBtn">Clear Results</button>
             <div id="testResults"></div>
         </div>
 
@@ -374,6 +374,12 @@
             testResults = [];
             testStep = 0;
         }
+
+        // Setup event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('runTestsBtn').addEventListener('click', runAllTests);
+            document.getElementById('clearResultsBtn').addEventListener('click', clearResults);
+        });
     </script>
 </body>
 </html>
