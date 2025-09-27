@@ -1,0 +1,11 @@
+{
+  "name": "inscription-netlify-functions",
+  "version": "1.0.0",
+  "description": "Netlify functions for inscription system",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.7",
+    "pg": "^8.16.3"
+  }
+}

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Inscription System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="/js/api-config.js"></script>
     <style>
         * {
             margin: 0;
@@ -715,7 +716,7 @@
             document.getElementById('adminName').textContent = adminUser.name || 'Admin';
 
             // Verify token validity
-            fetch('/api/auth/verify', {
+            fetch(API_ENDPOINTS.auth.verify, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -759,7 +760,7 @@
                 // Call logout API
                 if (token) {
                     try {
-                        const response = await fetch('/api/auth/logout', {
+                        const response = await fetch(API_ENDPOINTS.auth.logout, {
                             method: 'POST',
                             headers: {
                                 'Authorization': `Bearer ${token}`,
@@ -827,7 +828,7 @@
             const token = localStorage.getItem('adminToken');
             
             try {
-                const response = await fetch('/api/admin/dashboard/stats', {
+                const response = await fetch(`${API_ENDPOINTS.admin.stats}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -904,7 +905,7 @@
             if (search) params.append('search', search);
 
             try {
-                const response = await fetch(`/api/admin/inscriptions?${params}`, {
+                const response = await fetch(`${API_ENDPOINTS.admin.inscriptions}?${params}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1049,7 +1050,7 @@
             const token = localStorage.getItem('adminToken');
             
             try {
-                const response = await fetch(`/api/admin/inscriptions/${id}`, {
+                const response = await fetch(`${API_ENDPOINTS.admin.inscriptions}/${id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1185,7 +1186,7 @@
                 };
                 console.log('Request body:', requestBody);
                 
-                const response = await fetch(`/api/admin/inscriptions/${currentInscriptionId}/status`, {
+                const response = await fetch(`${API_ENDPOINTS.admin.inscriptions}/${currentInscriptionId}/status`, {
                     method: 'PATCH',
                     headers: {
                         'Authorization': `Bearer ${token}`,

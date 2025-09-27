@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Endpoints Test</title>
+    <script src="/js/api-config.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .endpoint {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+        }
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Endpoints Configuration Test</h1>
+    
+    <div class="test-section">
+        <h2>Environment Detection</h2>
+        <div id="environment-info"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Available Endpoints</h2>
+        <div id="endpoints-info"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Endpoint Tests</h2>
+        <button onclick="testEndpoints()">Test All Endpoints</button>
+        <div id="test-results"></div>
+    </div>
+
+    <script>
+        // Display environment information
+        document.getElementById('environment-info').innerHTML = `
+            <div class="result success">
+                <strong>Current Environment:</strong> ${window.location.hostname === 'localhost' ? 'Development (localhost)' : 'Production'}
+            </div>
+            <div class="result success">
+                <strong>Hostname:</strong> ${window.location.hostname}
+            </div>
+            <div class="result success">
+                <strong>Port:</strong> ${window.location.port || 'N/A'}
+            </div>
+        `;
+
+        // Display all endpoints
+        function displayEndpoints() {
+            let html = '';
+            
+            // Auth endpoints
+            html += '<h3>Authentication Endpoints:</h3>';
+            html += `<div class="endpoint">Login: ${API_ENDPOINTS.auth.login}</div>`;
+            html += `<div class="endpoint">Verify: ${API_ENDPOINTS.auth.verify}</div>`;
+            html += `<div class="endpoint">Logout: ${API_ENDPOINTS.auth.logout}</div>`;
+            
+            // Inscription endpoints
+            html += '<h3>Inscription Endpoints:</h3>';
+            html += `<div class="endpoint">Create: ${API_ENDPOINTS.inscriptions.create}</div>`;
+            
+            // Admin endpoints
+            html += '<h3>Admin Endpoints:</h3>';
+            html += `<div class="endpoint">List: ${API_ENDPOINTS.admin.inscriptions}</div>`;
+            html += `<div class="endpoint">Stats: ${API_ENDPOINTS.admin.stats}</div>`;
+            
+            document.getElementById('endpoints-info').innerHTML = html;
+        }
+
+        // Test endpoint accessibility (just check if URLs are properly formed)
+        async function testEndpoints() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = '<p>Testing endpoints...</p>';
+            
+            const tests = [
+                { name: 'Auth Login', url: API_ENDPOINTS.auth.login },
+                { name: 'Auth Verify', url: API_ENDPOINTS.auth.verify },
+                { name: 'Auth Logout', url: API_ENDPOINTS.auth.logout },
+                { name: 'Inscriptions Create', url: API_ENDPOINTS.inscriptions.create },
+                { name: 'Admin Inscriptions', url: API_ENDPOINTS.admin.inscriptions },
+                { name: 'Admin Stats', url: API_ENDPOINTS.admin.stats }
+            ];
+
+            let html = '<h3>Endpoint URL Validation:</h3>';
+            
+            tests.forEach(test => {
+                const isValidUrl = test.url.startsWith('http') || test.url.startsWith('/');
+                const isComplete = !test.url.includes('undefined') && !test.url.includes('null');
+                
+                html += `
+                    <div class="result ${isValidUrl && isComplete ? 'success' : 'error'}">
+                        <strong>${test.name}:</strong> ${test.url}
+                        ${isValidUrl && isComplete ? '✅ Valid' : '❌ Invalid'}
+                    </div>
+                `;
+            });
+
+            // Test basic connectivity (OPTIONS requests don't require auth)
+            html += '<h3>Connectivity Tests:</h3>';
+            
+            for (const test of tests) {
+                try {
+                    // Just test if we can reach the endpoint (will likely get CORS or auth errors, but that's expected)
+                    const response = await fetch(test.url, { 
+                        method: 'OPTIONS',
+                        mode: 'no-cors' // Avoid CORS issues for this test
+                    });
+                    
+                    html += `
+                        <div class="result success">
+                            <strong>${test.name} Connectivity:</strong> ✅ Reachable
+                        </div>
+                    `;
+                } catch (error) {
+                    html += `
+                        <div class="result error">
+                            <strong>${test.name} Connectivity:</strong> ❌ ${error.message}
+                        </div>
+                    `;
+                }
+            }
+
+            resultsDiv.innerHTML = html;
+        }
+
+        // Initialize
+        displayEndpoints();
+    </script>
+</body>
+</html>
