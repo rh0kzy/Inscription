@@ -708,7 +708,7 @@
             }
 
             if (!token) {
-                window.location.replace('/admin/login');
+                window.location.replace('/admin-login.html');
                 return;
             }
 
@@ -726,13 +726,13 @@
                     console.log('Token verification failed, redirecting to login');
                     localStorage.removeItem('adminToken');
                     localStorage.removeItem('adminUser');
-                    window.location.replace('/admin/login');
+                    window.location.replace('/admin-login.html');
                 }
             }).catch((error) => {
                 console.error('Token verification error:', error);
                 localStorage.removeItem('adminToken');
                 localStorage.removeItem('adminUser');
-                window.location.replace('/admin/login');
+                window.location.replace('/admin-login.html');
             });
         }
 

@@ -306,7 +306,7 @@
                         
                         console.log('Login successful, redirecting to admin dashboard');
                         // Redirect to admin dashboard
-                        window.location.replace('/admin');
+                        window.location.replace('/admin.html');
                     } else {
                         showAlert(result.message);
                     }
@@ -331,7 +331,7 @@
                 .then(result => {
                     if (result.success) {
                         console.log('Token valid, redirecting to admin dashboard');
-                        window.location.replace('/admin');
+                        window.location.replace('/admin.html');
                     } else {
                         console.log('Token invalid, removing from storage');
                         localStorage.removeItem('adminToken');
