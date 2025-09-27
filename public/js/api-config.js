@@ -15,13 +15,17 @@ const config = isProduction ? API_CONFIG.production : API_CONFIG.development;
 // API endpoints
 const API_ENDPOINTS = {
   auth: {
-    login: `${config.baseURL}/auth-login`
+    login: `${config.baseURL}/auth-login`,
+    verify: `${config.baseURL}/auth-verify`,
+    logout: `${config.baseURL}/auth-logout`
   },
   admin: {
     inscriptions: `${config.baseURL}/admin-inscriptions`,
     stats: `${config.baseURL}/admin-stats`
   },
-  inscriptions: `${config.baseURL}/inscriptions`
+  inscriptions: {
+    create: `${config.baseURL}/inscriptions`
+  }
 };
 
 // Export for use in other scripts

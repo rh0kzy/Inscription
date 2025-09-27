@@ -1,0 +1,22 @@
+# Production Environment Variables for Netlify
+# Copy these to your Netlify Dashboard → Site Settings → Environment Variables
+
+# Database Configuration
+DATABASE_URL=postgresql://postgres.sqzfbwybvqmsdmgrctfe:Covid-19@aws-1-eu-west-3.pooler.supabase.com:5432/postgres
+
+# JWT Secret
+JWT_SECRET=inscription-system-jwt-secret-key-2024
+
+# Email Configuration
+EMAIL_SERVICE=gmail
+EMAIL_USER=inscriptiondecision@gmail.com
+EMAIL_PASS=vhyvqydsvvzzoanp
+EMAIL_FROM=inscriptiondecision@gmail.com
+
+# Admin Configuration
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=admin123
+
+# Application URLs (Production)
+CLIENT_URL=https://inscriptiondecision.netlify.app
+ADMIN_URL=https://inscriptiondecision.netlify.app/admin
