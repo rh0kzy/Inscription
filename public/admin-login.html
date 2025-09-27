@@ -301,8 +301,8 @@
 
                     if (result.success) {
                         // Store token in localStorage
-                        localStorage.setItem('adminToken', result.data.token);
-                        localStorage.setItem('adminUser', JSON.stringify(result.data.user));
+                        localStorage.setItem('adminToken', result.token);
+                        localStorage.setItem('adminUser', JSON.stringify(result.user));
                         
                         console.log('Login successful, redirecting to admin dashboard');
                         // Redirect to admin dashboard

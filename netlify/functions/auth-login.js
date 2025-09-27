@@ -60,15 +60,20 @@ exports.handler = async (event, context) => {
       };
     }
 
+    // Use hardcoded fallback if environment variables are not set
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    const jwtSecret = process.env.JWT_SECRET || 'inscription-system-jwt-secret-key-2024';
+
     // Check if this is the default admin
-    if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+    if (email === adminEmail && password === adminPassword) {
       const token = jwt.sign(
         { 
           email: email,
           role: 'admin',
           name: 'Administrator'
         },
-        process.env.JWT_SECRET,
+        jwtSecret,
         { expiresIn: '24h' }
       );
 
