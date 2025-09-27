@@ -556,13 +556,7 @@
             </div>
 
             <div class="modal-actions">
-                <button class="btn" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-danger" onclick="makeDecision('rejected')">
-                    <i class="fas fa-times"></i> Reject
-                </button>
-                <button class="btn btn-success" onclick="makeDecision('approved')">
-                    <i class="fas fa-check"></i> Approve
-                </button>
+                <!-- Action buttons will be added dynamically -->
             </div>
         </div>
     </div>
@@ -1073,37 +1067,57 @@
         }
 
         async function makeDecision(status) {
-            if (!currentInscriptionId) return;
+            console.log('makeDecision called with status:', status);
+            console.log('currentInscriptionId:', currentInscriptionId);
+            
+            if (!currentInscriptionId) {
+                console.error('No inscription ID selected');
+                showAlert('No inscription selected. Please try again.');
+                return;
+            }
             
             const token = localStorage.getItem('adminToken');
+            if (!token) {
+                console.error('No admin token found');
+                showAlert('Authentication required. Please log in again.');
+                return;
+            }
+            
             const adminNotes = document.getElementById('adminNotes').value;
+            console.log('Admin notes:', adminNotes);
 
             // Show loading state
-            const submitBtn = document.querySelector('.modal-actions .btn-success, .modal-actions .btn-danger');
+            const submitBtn = event.target;
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
             submitBtn.disabled = true;
 
             try {
+                const requestBody = {
+                    status,
+                    admin_notes: adminNotes || null
+                };
+                console.log('Request body:', requestBody);
+                
                 const response = await fetch(`/api/admin/inscriptions/${currentInscriptionId}/status`, {
                     method: 'PATCH',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        status,
-                        admin_notes: adminNotes || null
-                    })
+                    body: JSON.stringify(requestBody)
                 });
 
+                console.log('Response status:', response.status);
                 const result = await response.json();
+                console.log('Response result:', result);
                 
                 if (result.success) {
                     showAlert(result.message || `Application ${status} successfully! Email notification sent.`, 'success');
                     closeModal();
                     loadDashboard(); // Refresh both stats and inscriptions
                 } else {
+                    console.error('Server returned error:', result);
                     showAlert(result.message || 'Failed to update application status');
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;

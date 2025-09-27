@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test - Inscription System</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+        button { padding: 8px 16px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Admin API Test Page</h1>
+    <p>This page helps test the approve/reject functionality</p>
+
+    <div class="test-section">
+        <h3>1. Admin Login Test</h3>
+        <button onclick="testLogin()">Test Admin Login</button>
+        <div id="loginResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Get Inscriptions</h3>
+        <button onclick="getInscriptions()">Get All Inscriptions</button>
+        <div id="inscriptionsResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. Test Approve/Reject</h3>
+        <p>First get inscriptions, then test approve/reject:</p>
+        <input type="number" id="inscriptionId" placeholder="Inscription ID">
+        <button onclick="testApprove()">Test Approve</button>
+        <button onclick="testReject()">Test Reject</button>
+        <div id="approveRejectResult"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. Create Test Inscription</h3>
+        <button onclick="createTestInscription()">Create Test Data</button>
+        <div id="createResult"></div>
+    </div>
+
+    <script>
+        let adminToken = localStorage.getItem('adminToken');
+
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const className = type === 'error' ? 'error' : (type === 'success' ? 'success' : 'info');
+            element.innerHTML = `<pre class="${className}">${typeof message === 'object' ? JSON.stringify(message, null, 2) : message}</pre>`;
+        }
+
+        async function testLogin() {
+            try {
+                const response = await fetch('/api/auth/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'admin@example.com',
+                        password: 'admin123'
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    adminToken = result.token;
+                    localStorage.setItem('adminToken', adminToken);
+                    log('loginResult', '✅ Login successful!\nToken: ' + adminToken, 'success');
+                } else {
+                    log('loginResult', '❌ Login failed: ' + result.message, 'error');
+                }
+            } catch (error) {
+                log('loginResult', '❌ Login error: ' + error.message, 'error');
+            }
+        }
+
+        async function getInscriptions() {
+            if (!adminToken) {
+                log('inscriptionsResult', '⚠️ Please login first', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/inscriptions', {
+                    headers: { 'Authorization': `Bearer ${adminToken}` }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    log('inscriptionsResult', `✅ Found ${result.data.inscriptions.length} inscriptions:\n` + JSON.stringify(result.data.inscriptions, null, 2), 'success');
+                } else {
+                    log('inscriptionsResult', '❌ Failed to get inscriptions: ' + result.message, 'error');
+                }
+            } catch (error) {
+                log('inscriptionsResult', '❌ Error getting inscriptions: ' + error.message, 'error');
+            }
+        }
+
+        async function testApprove() {
+            const id = document.getElementById('inscriptionId').value;
+            if (!id) {
+                log('approveRejectResult', '⚠️ Please enter an inscription ID', 'error');
+                return;
+            }
+
+            await testDecision(id, 'approved', 'Test approval from API test page');
+        }
+
+        async function testReject() {
+            const id = document.getElementById('inscriptionId').value;
+            if (!id) {
+                log('approveRejectResult', '⚠️ Please enter an inscription ID', 'error');
+                return;
+            }
+
+            await testDecision(id, 'rejected', 'Test rejection from API test page');
+        }
+
+        async function testDecision(id, status, notes) {
+            if (!adminToken) {
+                log('approveRejectResult', '⚠️ Please login first', 'error');
+                return;
+            }
+
+            try {
+                log('approveRejectResult', `🔄 Testing ${status} for inscription ${id}...`, 'info');
+                
+                const response = await fetch(`/api/admin/inscriptions/${id}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: status,
+                        admin_notes: notes
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    log('approveRejectResult', `✅ ${status.toUpperCase()} successful!\n📧 Email notification sent!\nResponse: ` + JSON.stringify(result, null, 2), 'success');
+                } else {
+                    log('approveRejectResult', `❌ ${status} failed: ` + result.message, 'error');
+                }
+            } catch (error) {
+                log('approveRejectResult', `❌ Error during ${status}: ` + error.message, 'error');
+            }
+        }
+
+        async function createTestInscription() {
+            try {
+                const testData = {
+                    firstName: 'John',
+                    lastName: 'Doe',
+                    email: 'john.doe@example.com',
+                    phone: '1234567890',
+                    birthDate: '1995-01-15',
+                    address: '123 Test Street',
+                    city: 'Test City',
+                    postalCode: '12345',
+                    country: 'Test Country',
+                    program: 'Computer Science',
+                    motivation: 'This is a test inscription for API testing purposes.'
+                };
+
+                const response = await fetch('/api/inscriptions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testData)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    log('createResult', `✅ Test inscription created!\nID: ${result.data.id}\nEmail: ${result.data.email}`, 'success');
+                    document.getElementById('inscriptionId').value = result.data.id;
+                } else {
+                    log('createResult', '❌ Failed to create test inscription: ' + result.message, 'error');
+                }
+            } catch (error) {
+                log('createResult', '❌ Error creating test inscription: ' + error.message, 'error');
+            }
+        }
+
+        // Auto-login if token exists
+        if (adminToken) {
+            document.addEventListener('DOMContentLoaded', () => {
+                log('loginResult', '✅ Using existing token: ' + adminToken, 'success');
+            });
+        }
+    </script>
+</body>
+</html>
