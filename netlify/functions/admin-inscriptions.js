@@ -134,7 +134,7 @@ exports.handler = async (event, context) => {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS'
+        'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS'
       }
     };
   }
@@ -345,6 +345,66 @@ exports.handler = async (event, context) => {
           success: true,
           message: `Inscription ${status} successfully! ${(status === 'approved' || status === 'rejected') ? 'Email notification sent.' : ''}`,
           data: updatedInscription
+        })
+      };
+
+    } else if (event.httpMethod === 'DELETE') {
+      // Delete inscription
+      const pathSegments = event.path.split('/');
+      const inscriptionId = pathSegments[pathSegments.length - 1]; // Get ID from path
+
+      if (!inscriptionId) {
+        return {
+          statusCode: 400,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            success: false,
+            message: 'Inscription ID is required'
+          })
+        };
+      }
+
+      // Get inscription details before deleting (for logging)
+      const inscriptionResult = await db.query('SELECT * FROM inscriptions WHERE id = $1', [inscriptionId]);
+      
+      if (inscriptionResult.rows.length === 0) {
+        return {
+          statusCode: 404,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            success: false,
+            message: 'Inscription not found'
+          })
+        };
+      }
+
+      const inscription = inscriptionResult.rows[0];
+
+      // Delete the inscription
+      await db.query('DELETE FROM inscriptions WHERE id = $1', [inscriptionId]);
+
+      console.log(`🗑️ Inscription deleted by admin: ID ${inscriptionId}, Email: ${inscription.email}, Name: ${inscription.full_name}`);
+
+      return {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          success: true,
+          message: 'Inscription deleted successfully',
+          data: {
+            deleted_id: inscriptionId,
+            deleted_email: inscription.email,
+            deleted_name: inscription.full_name
+          }
         })
       };
     }
