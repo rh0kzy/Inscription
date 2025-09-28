@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demande de Changement de Spécialité - USTHB</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .main-container {
+            padding: 2rem 0;
+            min-height: 100vh;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.5rem;
+        }
+        
+        .specialty-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .specialty-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .specialty-card.selected {
+            border-color: #4CAF50;
+            background-color: #f8fff8;
+        }
+        
+        .specialty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .ia-color { color: #FF6B6B; }
+        .secu-color { color: #4ECDC4; }
+        .gl-color { color: #45B7D1; }
+        
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+        }
+        
+        .btn-submit {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        
+        .header-logo {
+            max-width: 80px;
+            height: auto;
+        }
+
+        .student-info {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 2px solid #28a745;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.1);
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .info-item i {
+            width: 20px;
+            flex-shrink: 0;
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        /* Animation for student info appearance */
+        .student-info {
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Real-time search styling */
+        #searchLoading {
+            padding: 1rem;
+            background: rgba(13, 110, 253, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(13, 110, 253, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-10 col-lg-8">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h1 class="mb-0">
+                                <i class="fas fa-exchange-alt me-3"></i>
+                                Demande de Changement de Spécialité
+                            </h1>
+                            <p class="mb-0 mt-2">Université des Sciences et de Technologie Houari Boumediene</p>
+                            <small class="opacity-75">Faculté d'Informatique - Année 2025/2026</small>
+                        </div>
+                        <div class="card-body p-4">
+                            <!-- Alerts -->
+                            <div id="alerts-container"></div>
+
+                            <!-- Step 1: Student Identification -->
+                            <div id="step1" class="step-content">
+                                <h4 class="mb-4">
+                                    <i class="fas fa-user-search me-2"></i>
+                                    Étape 1: Identification de l'étudiant
+                                </h4>
+                                
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            <label for="matricule" class="form-label">
+                                                <i class="fas fa-id-card me-2"></i>
+                                                Numéro de Matricule
+                                            </label>
+                                            <input type="text" class="form-control" id="matricule" 
+                                                   placeholder="Tapez votre numéro de matricule..."
+                                                   maxlength="12" 
+                                                   autofocus
+                                                   tabindex="1">
+                                            <small class="text-muted">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Les informations s'afficheront automatiquement
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">&nbsp;</label>
+                                        <button type="button" class="btn btn-primary w-100" id="confirmMatricule" disabled>
+                                            <i class="fas fa-check me-2"></i>
+                                            Confirmer le matricule
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Loading indicator -->
+                                <div id="searchLoading" class="text-center my-3" style="display: none;">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                        <span class="visually-hidden">Recherche en cours...</span>
+                                    </div>
+                                    <small class="text-muted ms-2">Recherche en cours...</small>
+                                </div>
+
+                                <!-- Student Info Display -->
+                                <div id="studentInfo" class="student-info" style="display: none;">
+                                    <h5 class="mb-3">
+                                        <i class="fas fa-user-check me-2 text-success"></i>
+                                        Informations de l'étudiant
+                                    </h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="info-item mb-2">
+                                                <i class="fas fa-user me-2 text-primary"></i>
+                                                <strong>Nom complet:</strong> 
+                                                <span id="studentName" class="fw-bold text-dark"></span>
+                                            </div>
+                                            <div class="info-item mb-2">
+                                                <i class="fas fa-id-card me-2 text-primary"></i>
+                                                <strong>Matricule:</strong> 
+                                                <code id="studentMatricule" class="bg-light px-2 py-1 rounded"></code>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="info-item mb-2">
+                                                <i class="fas fa-graduation-cap me-2 text-success"></i>
+                                                <strong>Spécialité actuelle:</strong> 
+                                                <span id="currentSpecialty" class="badge bg-primary"></span>
+                                            </div>
+                                            <div class="info-item mb-2">
+                                                <i class="fas fa-layer-group me-2 text-info"></i>
+                                                <strong>Section:</strong> 
+                                                <span id="studentSection" class="text-muted"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Confirmation message -->
+                                    <div id="confirmationMessage" class="alert alert-info mt-3" style="display: none;">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Veuillez confirmer que ces informations sont correctes en cliquant sur "Confirmer le matricule"
+                                    </div>
+                                    
+                                    <!-- Continue button (shown only after confirmation) -->
+                                    <div class="text-center mt-3" id="continueSection" style="display: none;">
+                                        <button type="button" class="btn btn-success" id="continueToStep2">
+                                            <i class="fas fa-arrow-right me-2"></i>
+                                            Continuer vers le choix de spécialité
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: Specialty Selection -->
+                            <div id="step2" class="step-content" style="display: none;">
+                                <h4 class="mb-4">
+                                    <i class="fas fa-graduation-cap me-2"></i>
+                                    Étape 2: Choix de la nouvelle spécialité
+                                </h4>
+
+                                <p class="text-muted mb-4">Sélectionnez la spécialité vers laquelle vous souhaitez vous orienter :</p>
+
+                                <div class="row g-4 mb-4">
+                                    <div class="col-md-4">
+                                        <div class="card specialty-card h-100 text-center p-3" data-specialty="IA">
+                                            <div class="card-body">
+                                                <i class="fas fa-robot specialty-icon ia-color"></i>
+                                                <h5>Intelligence Artificielle</h5>
+                                                <p class="text-muted small">Machine Learning, Deep Learning, NLP, Computer Vision</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card specialty-card h-100 text-center p-3" data-specialty="SECU">
+                                            <div class="card-body">
+                                                <i class="fas fa-shield-alt specialty-icon secu-color"></i>
+                                                <h5>Cybersécurité</h5>
+                                                <p class="text-muted small">Sécurité des systèmes, Cryptographie, Ethical Hacking</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card specialty-card h-100 text-center p-3" data-specialty="GL">
+                                            <div class="card-body">
+                                                <i class="fas fa-code specialty-icon gl-color"></i>
+                                                <h5>Génie Logiciel</h5>
+                                                <p class="text-muted small">Développement, Architecture, Gestion de projets</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-success" id="continueToStep3" disabled>
+                                    <i class="fas fa-arrow-right me-2"></i>
+                                    Continuer
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary ms-2" id="backToStep1">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Retour
+                                </button>
+                            </div>
+
+                            <!-- Step 3: Motivation -->
+                            <div id="step3" class="step-content" style="display: none;">
+                                <h4 class="mb-4">
+                                    <i class="fas fa-pen-fancy me-2"></i>
+                                    Étape 3: Motivation
+                                </h4>
+
+                                <div class="mb-4">
+                                    <label for="motivation" class="form-label">
+                                        <i class="fas fa-comment-dots me-2"></i>
+                                        Expliquez les raisons de votre demande de changement
+                                    </label>
+                                    <textarea class="form-control" id="motivation" rows="8" 
+                                              placeholder="Décrivez vos motivations, vos objectifs professionnels, et pourquoi cette nouvelle spécialité correspond mieux à vos aspirations..."></textarea>
+                                    <small class="text-muted">Minimum 100 caractères requis</small>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="priority" class="form-label">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        Priorité de la demande
+                                    </label>
+                                    <select class="form-select" id="priority">
+                                        <option value="normal">Normale</option>
+                                        <option value="urgent">Urgente</option>
+                                    </select>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-success btn-submit" id="submitRequest">
+                                        <span class="loading">
+                                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                        </span>
+                                        <i class="fas fa-paper-plane me-2"></i>
+                                        Soumettre la demande
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" id="backToStep2">
+                                        <i class="fas fa-arrow-left me-2"></i>
+                                        Retour
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Success Step -->
+                            <div id="successStep" class="step-content text-center" style="display: none;">
+                                <div class="py-5">
+                                    <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
+                                    <h3 class="mt-4 text-success">Demande soumise avec succès !</h3>
+                                    <p class="text-muted mb-4">Votre demande de changement de spécialité a été enregistrée. Vous recevrez une réponse dans les plus brefs délais.</p>
+                                    <div class="alert alert-info">
+                                        <h5>Numéro de demande : <span id="requestId" class="fw-bold"></span></h5>
+                                        <p class="mb-0">Conservez ce numéro pour le suivi de votre demande.</p>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" onclick="location.reload()">
+                                        <i class="fas fa-plus me-2"></i>
+                                        Nouvelle demande
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api-config.js"></script>
+    <script src="js/specialty-change.js"></script>
+</body>
+</html>

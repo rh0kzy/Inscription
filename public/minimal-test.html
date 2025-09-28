@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Specialty Change - Minimal Test</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Specialty Change - Input Test</h2>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <div class="mb-3">
+                    <label for="matricule" class="form-label">
+                        <i class="fas fa-id-card me-2"></i>
+                        Numéro de Matricule
+                    </label>
+                    <input type="text" class="form-control" id="matricule" 
+                           placeholder="Tapez votre numéro de matricule..."
+                           maxlength="12">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Les informations s'afficheront automatiquement
+                    </small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">&nbsp;</label>
+                <button type="button" class="btn btn-primary w-100" id="confirmMatricule" disabled>
+                    <i class="fas fa-check me-2"></i>
+                    Confirmer le matricule
+                </button>
+            </div>
+        </div>
+        
+        <div id="output"></div>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOM loaded');
+                
+                const matriculeInput = document.getElementById('matricule');
+                const output = document.getElementById('output');
+                
+                console.log('Matricule input element:', matriculeInput);
+                
+                if (matriculeInput) {
+                    matriculeInput.addEventListener('input', function(e) {
+                        const value = e.target.value;
+                        console.log('Input event - value:', value);
+                        output.innerHTML = `<div class="alert alert-info">Typing: "${value}" (Length: ${value.length})</div>`;
+                    });
+                    
+                    matriculeInput.addEventListener('focus', function() {
+                        console.log('Input focused');
+                        output.innerHTML = `<div class="alert alert-success">Input field is focused and ready for typing!</div>`;
+                    });
+                    
+                    matriculeInput.addEventListener('keypress', function(e) {
+                        console.log('Keypress:', e.key, 'Code:', e.keyCode);
+                    });
+                    
+                    matriculeInput.addEventListener('keydown', function(e) {
+                        console.log('Keydown:', e.key);
+                    });
+                    
+                    // Check if input is disabled or readonly
+                    console.log('Input disabled:', matriculeInput.disabled);
+                    console.log('Input readonly:', matriculeInput.readOnly);
+                    console.log('Input tabindex:', matriculeInput.tabIndex);
+                    
+                } else {
+                    console.error('Matricule input not found!');
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>

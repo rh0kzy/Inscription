@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed Input Test</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .input-debug {
+            position: relative;
+        }
+        
+        .input-debug::after {
+            content: "Click here to type";
+            position: absolute;
+            top: -20px;
+            right: 0;
+            background: #007bff;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+        }
+        
+        .input-focused::after {
+            content: "Ready for typing!" !important;
+            background: #28a745 !important;
+        }
+        
+        .typing-indicator {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="fas fa-bug me-2"></i>Input Field Fix & Debug</h5>
+            </div>
+            <div class="card-body">
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Status:</strong> Testing input field functionality with enhanced debugging.
+                </div>
+                
+                <!-- Enhanced Matricule Input -->
+                <div class="mb-4">
+                    <label for="matricule" class="form-label">
+                        <i class="fas fa-id-card me-2"></i>
+                        Numéro de Matricule (Enhanced)
+                    </label>
+                    <div class="input-debug">
+                        <input type="text" 
+                               class="form-control" 
+                               id="matricule" 
+                               placeholder="Click here and type your matricule..."
+                               maxlength="12"
+                               autofocus
+                               tabindex="1"
+                               autocomplete="off"
+                               spellcheck="false">
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Type at least 8 characters to test the search functionality
+                    </small>
+                </div>
+                
+                <!-- Real-time feedback -->
+                <div class="typing-indicator" id="feedback">
+                    <div class="text-muted">
+                        <i class="fas fa-keyboard me-2"></i>
+                        <span id="feedbackText">No input detected yet. Click the input field above and start typing.</span>
+                    </div>
+                </div>
+                
+                <!-- Debug info -->
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <strong>Debug Info:</strong>
+                        <span id="debugInfo">Initializing...</span>
+                    </small>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Enhanced Input Debug Started');
+            
+            const matriculeInput = document.getElementById('matricule');
+            const feedback = document.getElementById('feedback');
+            const feedbackText = document.getElementById('feedbackText');
+            const debugInfo = document.getElementById('debugInfo');
+            
+            // Debug info
+            debugInfo.textContent = `Input found: ${!!matriculeInput}, Disabled: ${matriculeInput?.disabled}, ReadOnly: ${matriculeInput?.readOnly}`;
+            
+            if (!matriculeInput) {
+                feedbackText.innerHTML = '<span class="text-danger">❌ Input element not found!</span>';
+                return;
+            }
+            
+            // Multiple event listeners for comprehensive debugging
+            matriculeInput.addEventListener('input', function(e) {
+                const value = e.target.value;
+                feedbackText.innerHTML = `<span class="text-success">✅ Typing detected!</span> Value: "<strong>${value}</strong>" (${value.length} chars)`;
+                feedback.className = 'typing-indicator alert alert-success';
+                console.log('Input event:', value);
+            });
+            
+            matriculeInput.addEventListener('focus', function() {
+                feedbackText.innerHTML = '<span class="text-info">🎯 Input field focused - ready for typing!</span>';
+                matriculeInput.parentElement.classList.add('input-focused');
+                console.log('Focus event');
+            });
+            
+            matriculeInput.addEventListener('blur', function() {
+                matriculeInput.parentElement.classList.remove('input-focused');
+                console.log('Blur event');
+            });
+            
+            matriculeInput.addEventListener('keydown', function(e) {
+                console.log('Keydown:', e.key, 'Code:', e.code);
+                feedbackText.innerHTML = `<span class="text-primary">⌨️ Key pressed:</span> ${e.key}`;
+            });
+            
+            matriculeInput.addEventListener('keypress', function(e) {
+                console.log('Keypress:', e.key, 'Code:', e.code);
+            });
+            
+            matriculeInput.addEventListener('keyup', function(e) {
+                console.log('Keyup:', e.key);
+            });
+            
+            matriculeInput.addEventListener('click', function() {
+                feedbackText.innerHTML = '<span class="text-info">🖱️ Input clicked - cursor should be active</span>';
+                console.log('Click event');
+            });
+            
+            // Force focus after a delay
+            setTimeout(() => {
+                matriculeInput.focus();
+                console.log('🎯 Auto-focus applied');
+                feedbackText.innerHTML = '<span class="text-info">🎯 Auto-focused - try typing now!</span>';
+            }, 1000);
+            
+            // Alternative input detection method
+            let lastValue = '';
+            setInterval(() => {
+                if (matriculeInput.value !== lastValue) {
+                    console.log('Value changed via polling:', matriculeInput.value);
+                    lastValue = matriculeInput.value;
+                }
+            }, 100);
+            
+            console.log('All event listeners attached');
+        });
+    </script>
+</body>
+</html>

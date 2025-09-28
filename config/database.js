@@ -50,27 +50,40 @@ class Database {
     const client = await this.pool.connect();
     
     try {
-      // Create inscriptions table
+      // Create students table
       await client.query(`
-        CREATE TABLE IF NOT EXISTS inscriptions (
+        CREATE TABLE IF NOT EXISTS students (
           id SERIAL PRIMARY KEY,
+          matricule VARCHAR(50) UNIQUE NOT NULL,
           first_name VARCHAR(255) NOT NULL,
           last_name VARCHAR(255) NOT NULL,
-          email VARCHAR(255) UNIQUE NOT NULL,
-          phone VARCHAR(50) NOT NULL,
-          birth_date DATE NOT NULL,
-          address TEXT NOT NULL,
-          city VARCHAR(255) NOT NULL,
-          postal_code VARCHAR(20) NOT NULL,
-          country VARCHAR(255) NOT NULL,
-          program VARCHAR(255) NOT NULL,
+          current_specialty VARCHAR(10) NOT NULL,
+          palier VARCHAR(10) NOT NULL,
+          section VARCHAR(10) NOT NULL,
+          etat VARCHAR(10) NOT NULL,
+          groupe_td VARCHAR(10),
+          groupe_tp VARCHAR(10),
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
+      // Create specialty change requests table (replacing inscriptions)
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS specialty_change_requests (
+          id SERIAL PRIMARY KEY,
+          student_matricule VARCHAR(50) NOT NULL,
+          current_specialty VARCHAR(10) NOT NULL,
+          requested_specialty VARCHAR(10) NOT NULL,
           motivation TEXT NOT NULL,
           status VARCHAR(20) DEFAULT 'pending',
+          priority VARCHAR(10) DEFAULT 'normal',
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           admin_notes TEXT,
           processed_by VARCHAR(255),
-          processed_at TIMESTAMP
+          processed_at TIMESTAMP,
+          FOREIGN KEY (student_matricule) REFERENCES students(matricule) ON DELETE CASCADE
         )
       `);
 
@@ -89,15 +102,23 @@ class Database {
 
       // Create indexes for better performance
       await client.query(`
-        CREATE INDEX IF NOT EXISTS idx_inscriptions_status ON inscriptions(status);
+        CREATE INDEX IF NOT EXISTS idx_students_matricule ON students(matricule);
       `);
       
       await client.query(`
-        CREATE INDEX IF NOT EXISTS idx_inscriptions_created_at ON inscriptions(created_at);
+        CREATE INDEX IF NOT EXISTS idx_students_specialty ON students(current_specialty);
       `);
       
       await client.query(`
-        CREATE INDEX IF NOT EXISTS idx_inscriptions_email ON inscriptions(email);
+        CREATE INDEX IF NOT EXISTS idx_specialty_requests_status ON specialty_change_requests(status);
+      `);
+      
+      await client.query(`
+        CREATE INDEX IF NOT EXISTS idx_specialty_requests_created_at ON specialty_change_requests(created_at);
+      `);
+      
+      await client.query(`
+        CREATE INDEX IF NOT EXISTS idx_specialty_requests_matricule ON specialty_change_requests(student_matricule);
       `);
 
       console.log('✅ Database tables and indexes created successfully');

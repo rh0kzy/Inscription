@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Debug Test</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Input Field Debug Test</h2>
+        
+        <div class="mb-3">
+            <label for="testInput" class="form-label">Test Input Field</label>
+            <input type="text" class="form-control" id="testInput" placeholder="Type here to test...">
+        </div>
+        
+        <div id="output"></div>
+        
+        <script>
+            document.getElementById('testInput').addEventListener('input', function(e) {
+                document.getElementById('output').innerHTML = `<div class="alert alert-info">You typed: ${e.target.value}</div>`;
+                console.log('Input event fired:', e.target.value);
+            });
+            
+            document.getElementById('testInput').addEventListener('keypress', function(e) {
+                console.log('Keypress event fired:', e.key);
+            });
+            
+            document.getElementById('testInput').addEventListener('focus', function(e) {
+                console.log('Focus event fired');
+            });
+            
+            console.log('Debug script loaded successfully');
+        </script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Input Field Debug</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h5>Input Field Debugging</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Debugging Status:</strong> Check if you can type in the input fields below.
+                </div>
+                
+                <!-- Test 1: Simple input -->
+                <div class="mb-4">
+                    <h6>Test 1: Basic Input</h6>
+                    <input type="text" class="form-control" id="test1" placeholder="Basic input test">
+                    <div id="result1" class="mt-2"></div>
+                </div>
+                
+                <!-- Test 2: Matricule input (exact copy from main page) -->
+                <div class="mb-4">
+                    <h6>Test 2: Matricule Input (Copy from main page)</h6>
+                    <label for="matricule" class="form-label">
+                        <i class="fas fa-id-card me-2"></i>
+                        Numéro de Matricule
+                    </label>
+                    <input type="text" class="form-control" id="matricule" 
+                           placeholder="Tapez votre numéro de matricule..."
+                           maxlength="12">
+                    <div id="result2" class="mt-2"></div>
+                </div>
+                
+                <!-- Test 3: Textarea -->
+                <div class="mb-4">
+                    <h6>Test 3: Textarea</h6>
+                    <textarea class="form-control" id="test3" rows="3" placeholder="Textarea test"></textarea>
+                    <div id="result3" class="mt-2"></div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <strong>Instructions:</strong> Try typing in each field above. Results will appear below each field.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== INPUT DEBUG TEST STARTED ===');
+            
+            // Test 1
+            const test1 = document.getElementById('test1');
+            const result1 = document.getElementById('result1');
+            
+            test1.addEventListener('input', function(e) {
+                result1.innerHTML = `<div class="alert alert-success">✅ Test 1 Working! Value: "${e.target.value}"</div>`;
+                console.log('Test 1 input:', e.target.value);
+            });
+            
+            // Test 2 - Matricule
+            const matricule = document.getElementById('matricule');
+            const result2 = document.getElementById('result2');
+            
+            matricule.addEventListener('input', function(e) {
+                result2.innerHTML = `<div class="alert alert-success">✅ Matricule Input Working! Value: "${e.target.value}"</div>`;
+                console.log('Matricule input:', e.target.value);
+            });
+            
+            // Test 3 - Textarea
+            const test3 = document.getElementById('test3');
+            const result3 = document.getElementById('result3');
+            
+            test3.addEventListener('input', function(e) {
+                result3.innerHTML = `<div class="alert alert-success">✅ Textarea Working! Value: "${e.target.value}"</div>`;
+                console.log('Textarea input:', e.target.value);
+            });
+            
+            // Focus tests
+            [test1, matricule, test3].forEach((element, index) => {
+                element.addEventListener('focus', function() {
+                    console.log(`Element ${index + 1} focused`);
+                });
+                
+                element.addEventListener('blur', function() {
+                    console.log(`Element ${index + 1} lost focus`);
+                });
+                
+                element.addEventListener('click', function() {
+                    console.log(`Element ${index + 1} clicked`);
+                });
+            });
+            
+            console.log('All event listeners attached');
+            console.log('Test 1 element:', test1);
+            console.log('Matricule element:', matricule);
+            console.log('Test 3 element:', test3);
+        });
+    </script>
+</body>
+</html>

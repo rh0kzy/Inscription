@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Système de Changement de Spécialité - USTHB</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .hero-section {
+            padding: 4rem 0;
+            text-align: center;
+            color: white;
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .feature-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .ia-color { color: #FF6B6B; }
+        .secu-color { color: #4ECDC4; }
+        .gl-color { color: #45B7D1; }
+        .admin-color { color: #96CEB4; }
+        
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.3);
+        }
+        
+        .stats-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .footer-section {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2rem 0;
+            margin-top: 3rem;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <h1 class="hero-title">
+                        <i class="fas fa-exchange-alt me-3"></i>
+                        Système de Changement de Spécialité
+                    </h1>
+                    <p class="hero-subtitle">
+                        Université des Sciences et de Technologie Houari Boumediene<br>
+                        Faculté d'Informatique - Année Universitaire 2025/2026
+                    </p>
+                    
+                    <!-- Statistics -->
+                    <div class="stats-section">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <div class="stat-number">361</div>
+                                    <div>Étudiants inscrits</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <div class="stat-number">3</div>
+                                    <div>Spécialités disponibles</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <div class="stat-number">144</div>
+                                    <div>Cybersécurité</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stat-item">
+                                    <div class="stat-number">123</div>
+                                    <div>Intelligence Artificielle</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="specialty-change.html" class="btn btn-primary-custom btn-lg">
+                        <i class="fas fa-paper-plane me-2"></i>
+                        Faire une demande de changement
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container">
+        <div class="row">
+            <!-- Specialties -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-robot feature-icon ia-color"></i>
+                        <h4>Intelligence Artificielle</h4>
+                        <p class="text-muted">Spécialisez-vous dans les technologies d'avenir : Machine Learning, Deep Learning, Computer Vision, et NLP.</p>
+                        <div class="badge bg-danger">123 étudiants</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-shield-alt feature-icon secu-color"></i>
+                        <h4>Cybersécurité</h4>
+                        <p class="text-muted">Protégez le monde numérique avec des compétences en sécurité des systèmes, cryptographie et ethical hacking.</p>
+                        <div class="badge bg-info">144 étudiants</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-code feature-icon gl-color"></i>
+                        <h4>Génie Logiciel</h4>
+                        <p class="text-muted">Maîtrisez l'art de créer des logiciels robustes : développement, architecture, et gestion de projets.</p>
+                        <div class="badge bg-primary">94 étudiants</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Process -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h2 class="text-center text-white mb-5">Comment ça marche ?</h2>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card feature-card text-center">
+                    <div class="card-body p-4">
+                        <i class="fas fa-search feature-icon text-primary"></i>
+                        <h5>1. Identification</h5>
+                        <p class="text-muted">Entrez votre numéro de matricule pour récupérer vos informations.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card feature-card text-center">
+                    <div class="card-body p-4">
+                        <i class="fas fa-graduation-cap feature-icon text-success"></i>
+                        <h5>2. Choix de spécialité</h5>
+                        <p class="text-muted">Sélectionnez la nouvelle spécialité qui correspond à vos objectifs.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card feature-card text-center">
+                    <div class="card-body p-4">
+                        <i class="fas fa-pen-fancy feature-icon text-warning"></i>
+                        <h5>3. Motivation</h5>
+                        <p class="text-muted">Expliquez vos motivations et soumettez votre demande.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Access -->
+        <div class="row mt-4">
+            <div class="col-md-6 mx-auto">
+                <div class="card feature-card">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-user-shield feature-icon admin-color"></i>
+                        <h5>Accès Administrateur</h5>
+                        <p class="text-muted">Gestion des demandes de changement de spécialité</p>
+                        <a href="admin-login.html" class="btn btn-outline-primary">
+                            <i class="fas fa-sign-in-alt me-2"></i>
+                            Se connecter
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <p class="mb-0">
+                        <i class="fas fa-university me-2"></i>
+                        © 2025 USTHB - Faculté d'Informatique
+                    </p>
+                    <small class="opacity-75">Système de gestion des demandes de changement de spécialité</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

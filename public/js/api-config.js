@@ -25,8 +25,19 @@ const API_ENDPOINTS = {
   },
   inscriptions: {
     create: `${config.baseURL}/inscriptions`
+  },
+  students: {
+    search: `${config.baseURL}/students/search`
+  },
+  specialtyRequests: {
+    create: `${config.baseURL}/specialty-requests`,
+    list: `${config.baseURL}/specialty-requests`,
+    statistics: `${config.baseURL}/specialty-stats`
   }
 };
 
 // Export for use in other scripts
 window.API_ENDPOINTS = API_ENDPOINTS;
+
+// For backward compatibility
+window.API_BASE_URL = config.baseURL;

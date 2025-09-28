@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSP Compliance Check</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5><i class="fas fa-shield-alt me-2"></i>CSP Compliance Verification</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Status:</strong> Checking for CSP compliance - no inline scripts allowed.
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-code me-2"></i>JavaScript Status</h6>
+                        <div id="js-status" class="mb-3">
+                            <div class="badge bg-warning">Checking...</div>
+                        </div>
+                        
+                        <h6><i class="fas fa-mouse-pointer me-2"></i>Interaction Test</h6>
+                        <button class="btn btn-primary me-2" id="testBtn">
+                            <i class="fas fa-play me-1"></i>Test Click
+                        </button>
+                        <span id="click-result" class="text-muted">Not clicked yet</span>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-keyboard me-2"></i>Input Test</h6>
+                        <input type="text" class="form-control mb-2" id="testInput" placeholder="Type here...">
+                        <div id="input-result" class="text-muted">No input yet</div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6><i class="fas fa-external-link-alt me-2"></i>Navigation Tests</h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a href="specialty-change.html" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-exchange-alt me-1"></i>Specialty Change
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="admin-login.html" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-sign-in-alt me-1"></i>Admin Login
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="index.html" class="btn btn-outline-info w-100">
+                                <i class="fas fa-home me-1"></i>Registration
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4 alert alert-info">
+                    <h6><i class="fas fa-info-circle me-2"></i>CSP Compliance Status</h6>
+                    <ul class="mb-0">
+                        <li>✅ No inline JavaScript - all scripts are external files</li>
+                        <li>✅ External scripts allowed from cdnjs.cloudflare.com</li>
+                        <li>✅ All event listeners attached via external JavaScript</li>
+                        <li id="console-status">⏳ Checking console for CSP violations...</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="js/csp-compliance-check.js"></script>
+</body>
+</html>

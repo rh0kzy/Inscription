@@ -9,6 +9,7 @@ const Database = require('./config/database-adapter');
 const inscriptionRoutes = require('./routes/inscriptions');
 const adminRoutes = require('./routes/admin');
 const authRoutes = require('./routes/auth');
+const specialtyChangeRoutes = require('./routes/specialty-change');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,7 +20,7 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
-      scriptSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://cdnjs.cloudflare.com"],
       imgSrc: ["'self'", "data:", "https:"],
       fontSrc: ["'self'", "https://cdnjs.cloudflare.com"]
     }
@@ -52,14 +53,25 @@ async function startServer() {
     app.use('/api/inscriptions', inscriptionRoutes);
     app.use('/api/admin', adminRoutes);
     app.use('/api/auth', authRoutes);
+    
+    // New specialty change routes
+    app.post('/api/students/search', specialtyChangeRoutes.searchStudent);
+    app.post('/api/specialty-requests', specialtyChangeRoutes.createRequest);
+    app.get('/api/specialty-requests', specialtyChangeRoutes.getAllRequests);
+    app.get('/api/specialty-requests/statistics', specialtyChangeRoutes.getStatistics);
+    app.put('/api/specialty-requests/:id/status', specialtyChangeRoutes.updateRequestStatus);
 
     // Serve main pages
     app.get('/', (req, res) => {
-      res.sendFile(path.join(__dirname, 'public', 'index.html'));
+      res.sendFile(path.join(__dirname, 'public', 'index-new.html'));
+    });
+    
+    app.get('/specialty-change', (req, res) => {
+      res.sendFile(path.join(__dirname, 'public', 'specialty-change.html'));
     });
 
     app.get('/admin', (req, res) => {
-      res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+      res.sendFile(path.join(__dirname, 'public', 'specialty-admin.html'));
     });
 
     app.get('/admin/login', (req, res) => {
